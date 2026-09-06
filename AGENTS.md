@@ -22,7 +22,7 @@ para el molde. Rellena esta tabla en cuanto crees el primero._
 
 ## Skills de uso puntual
 
-### `/ponytail` — fuerza la solución más simple que funciona
+### `ponytail` — fuerza la solución más simple que funciona
 
 Invócala cuando notes alguna de estas señales:
 
@@ -38,7 +38,7 @@ Invócala cuando notes alguna de estas señales:
 - Lógica de seguridad, auth o pagos — ponytail no simplifica esto
 - Cuando necesitas entender la causa raíz de un bug primero
 
-Niveles: `/ponytail lite` (sugiere alternativa), `/ponytail full` (por defecto), `/ponytail ultra` (extremista YAGNI).
+Niveles: `lite` (sugiere alternativa), `full` (por defecto), `ultra` (extremista YAGNI). Cada harness expone la skill a su manera (slash command, mención por nombre...); el nivel se indica al invocarla.
 
 ### `grilling` — interroga al usuario antes de construir
 
@@ -65,36 +65,33 @@ Al terminar de implementar una feature nueva, un endpoint nuevo, o cualquier cam
 
 # Subagentes — Selección de modelo
 
-Cuando lances subagentes con el Agent tool, elige el modelo según la tarea:
+Cuando lances subagentes, elige el tier según la tarea. Los tiers son genéricos; el mapeo a modelos
+concretos de cada proveedor va en el fichero de configuración del harness (p. ej. CLAUDE.md para Claude Code).
 
-## Haiku — tareas rápidas y de bajo coste
-
-`model: "haiku"`
+## Tier rápido — tareas rápidas y de bajo coste
 
 - Buscar archivos, leer código, grep, exploración del repo
 - Responder preguntas factuales sobre el código
 - Tareas de un solo paso sin decisiones complejas
-- Agente tipo `Explore` por defecto
+- Agentes de exploración por defecto
 
-## Sonnet — trabajo estándar
+## Tier estándar — trabajo habitual
 
-`model: "sonnet"` (modelo por defecto, no hace falta especificarlo)
+Es el tier por defecto, no hace falta indicarlo.
 
 - Escribir y editar código nuevo
 - Implementar features, corregir bugs
 - Generar traducciones, plantillas, CSS
-- Agente tipo `general-purpose` por defecto
+- Agentes de propósito general por defecto
 
-## Opus — decisiones críticas
-
-`model: "opus"`
+## Tier de razonamiento alto — decisiones críticas
 
 - Revisar arquitectura o diseño de sistema
 - Refactors complejos con muchas dependencias
 - Decisiones de seguridad o rendimiento críticas
 - Segunda opinión independiente antes de merge
-- Agente tipo `Plan` o revisión de PR
+- Agentes de planificación o revisión de PR
 
 ## Regla de oro
 
-> Empieza con Haiku para explorar, Sonnet para construir, Opus para revisar lo que importa.
+> Explora con el tier rápido, construye con el estándar, revisa lo que importa con el de razonamiento alto.

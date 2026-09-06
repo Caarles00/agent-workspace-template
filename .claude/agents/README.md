@@ -19,7 +19,7 @@ Cada agente es un fichero `.claude/agents/<nombre>.md` con frontmatter:
 name: nombre-corto
 description: Una frase — cuándo se lanza este agente y qué produce.
 tools: [Read, Write, Edit, Bash, Grep, Glob]   # ajusta al mínimo necesario
-model: sonnet   # ver regla de modelo en AGENTS.md
+model: sonnet   # tier estándar; mapeo de tiers en CLAUDE.md, criterio en AGENTS.md
 ---
 
 Instrucciones del agente: convenciones del proyecto, patrones a seguir,

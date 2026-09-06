@@ -1,6 +1,6 @@
 # Seguridad
 
-> Checklist de referencia, agnóstica de stack. La skill `security-review` (`.claude/skills/security-review/`)
+> Checklist de referencia, agnóstica de stack. La skill `security-review` (`.agents/skills/security-review/`)
 > la aplica automáticamente al revisar código; esto es la versión legible para humanos.
 
 ## Al añadir cualquier endpoint o punto de entrada

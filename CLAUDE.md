@@ -1,3 +1,5 @@
+@AGENTS.md
+
 # TEN EN CUENTA ESTAS COSAS SIEMPRE
 
 > Plantilla base. Rellena cada sección al arrancar un proyecto nuevo y borra este aviso.
@@ -26,4 +28,11 @@
 - _(preferencia de interactividad: HTMX, framework SPA, vanilla JS... y cuándo usar cada uno)_
 - Preservar siempre la sintaxis de templates y la lógica existente al modificarlos
 
-Para el uso de agentes, subagentes y skills de flujo de trabajo (cuándo lanzar un subagente, interrogatorio previo a implementar, revisión al completar features), ver [AGENTS.md](AGENTS.md).
+## Específico de Claude Code
+
+La doctrina general (cuándo lanzar subagentes, cuándo invocar cada skill, tiers de modelo) vive en
+[AGENTS.md](AGENTS.md) y se importa arriba con `@AGENTS.md`. Aquí solo va lo que no aplica a otros harnesses:
+
+- **Mapeo de tiers a modelos**: rápido → `haiku`, estándar → `sonnet` (por defecto), razonamiento alto → `opus`.
+- Las skills se invocan también como slash command (`/ponytail lite|full|ultra`, `/grilling`, `/tdd`...).
+- Los subagentes propios del proyecto van en `.claude/agents/` (ver [.claude/agents/README.md](.claude/agents/README.md)).
