@@ -1,32 +1,44 @@
 # dev-skeleton
 
-Plantilla base para arrancar un proyecto nuevo con Claude Code ya configurado: skills
+Plantilla base para arrancar un proyecto nuevo con agentes de código ya configurados: skills
 genéricas, convenciones de agentes/subagentes, y documentos de referencia de buenas
-prácticas (seguridad, testing), todo agnóstico de lenguaje y framework.
+prácticas (seguridad, testing), todo agnóstico de lenguaje, framework y harness (Claude Code,
+Codex, Cursor, OpenCode...).
 
 ## Uso
 
+La forma más simple es el botón **Use this template** de GitHub (o su equivalente en CLI), que
+crea un repo nuevo sin arrastrar el historial de la plantilla:
+
 ```bash
-git clone https://github.com/<tu-usuario>/dev-skeleton.git nombre-del-proyecto
+gh repo create nombre-del-proyecto --template Caarles00/dev-skeleton --private --clone
+```
+
+Si prefieres clonar a mano:
+
+```bash
+git clone https://github.com/Caarles00/dev-skeleton.git nombre-del-proyecto
 cd nombre-del-proyecto
 rm -rf .git && git init   # deshaz el historial de la plantilla
 ```
 
+En Windows, ejecuta después `scripts/install.sh --copy` (ver [Cómo están organizadas las skills](#cómo-están-organizadas-las-skills)).
+
 Luego, en orden:
 
-1. Rellena [CLAUDE.md](CLAUDE.md) con el stack real (backend, frontend, gestor de paquetes, convenciones de código, quirks de librerías).
+1. Rellena [CLAUDE.md](CLAUDE.md) con el stack real (backend, frontend, gestor de paquetes, convenciones de código, quirks de librerías). La doctrina compartida entre harnesses (subagentes, skills, tiers de modelo) está en [AGENTS.md](AGENTS.md); CLAUDE.md la importa con `@AGENTS.md`.
 2. Ajusta [SECURITY.md](SECURITY.md) y [TESTING.md](TESTING.md) si el stack tiene checklist propio (p. ej. herramientas de audit de dependencias, framework de test concreto).
 3. Cuando el proyecto tenga patrones de tarea que se repiten (features de backend, vistas de frontend, tests), crea agentes en `.claude/agents/` siguiendo [.claude/agents/README.md](.claude/agents/README.md) y añádelos a la tabla de [AGENTS.md](AGENTS.md).
 4. Añade skills específicas del stack si aplica (framework de backend, librería de UI/animación, proveedor de datos como Supabase, etc.) — no vienen incluidas porque dependen del proyecto.
 
-## Qué incluye `.claude/skills/`
+## Qué incluye `.agents/skills/`
 
 Todas agnósticas de lenguaje/framework:
 
 | Skill | Para qué |
 |---|---|
 | `ponytail` | Fuerza la solución más simple — anti-overengineering |
-| `grilling` / `grill-me` | Interroga el plan antes de construir, detecta casos borde sin resolver |
+| `grilling` | Interroga el plan antes de construir, detecta casos borde sin resolver |
 | `tdd` | Guía el bucle rojo→verde: qué es un buen test, dónde van los tests (seams), anti-patrones (tests acoplados a implementación, tautológicos, "horizontal slicing") |
 | `requesting-code-review` | Checklist de revisión al cerrar una feature |
 | `security-review` | Revisión de seguridad tipo OWASP Top 10 |
@@ -36,14 +48,32 @@ Todas agnósticas de lenguaje/framework:
 | `web-design-guidelines` | Revisión de accesibilidad/UX del frontend |
 | `obsidian-markdown` | Sintaxis de Obsidian para la documentación en `docs.local/` |
 
-`tdd` se instaló con [`npx skills add`](https://skills.sh) en vez de copiarse a mano — por eso
-vive en `.agents/skills/tdd/` (fuente canónica, compartida entre editores) con un symlink en
-`.claude/skills/tdd/`. `skills-lock.json` registra su origen y hash para poder actualizarla más
-adelante con el mismo comando. Es el método recomendado para sumar skills nuevas de repos
-externos; las demás se copiaron a mano porque ya vivían en otro proyecto propio.
+## Cómo están organizadas las skills
+
+- **Fuente canónica**: `.agents/skills/<skill>/`. Es la carpeta que comparten Codex, Cursor, OpenCode
+  y el resto de harnesses que siguen la convención de [skills.sh](https://skills.sh). Se edita solo aquí.
+- **Por harness**: `.claude/skills/<skill>` es un symlink relativo al canon (Claude Code sigue symlinks
+  y deduplica). Para otro harness que use carpeta propia, se añade otro juego de symlinks igual.
+- **Script**: `scripts/install.sh` recrea los symlinks que falten. En Windows sin Developer Mode git
+  materializa los symlinks como ficheros de texto; ahí usa `scripts/install.sh --copy`, que copia en
+  vez de enlazar (y asume que actualizarás las copias a mano).
+- **Añadir skills externas**: `npx skills add <owner>/<repo>` instala en el canon, crea los symlinks
+  y registra origen y hash en `skills-lock.json` para poder actualizar después con el mismo comando.
+  Solo `tdd` entró por esa vía; las demás se copiaron a mano desde otro proyecto propio.
+- **Metadatos por harness dentro de una skill**: `agents/openai.yaml` lo lee Codex; el campo
+  `disable-model-invocation` del frontmatter lo lee Claude Code (fuerza invocación manual). Los demás
+  harnesses ignoran lo que no conocen, así que conviven sin problema.
 
 ## Qué NO incluye (a propósito)
 
 Agentes concretos (`backend-feature`, `frontend-template`, `testing`...) y skills atadas
 a un stack (framework de backend, librería de animación, proveedor cloud) — se recrean o
 se añaden por proyecto, porque copiarlas sin adaptar el stack real no aporta nada.
+
+## Licencia y contenido de terceros
+
+El repo es [MIT](LICENSE). Dos skills incluyen material con licencia propia:
+
+- `security-review`: referencias derivadas de la [OWASP Cheat Sheet Series](https://cheatsheetseries.owasp.org/),
+  bajo CC BY-SA 4.0 (ver su `LICENSE`).
+- `tdd`: procede de [mattpocock/skills](https://github.com/mattpocock/skills), MIT.

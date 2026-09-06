@@ -2,7 +2,7 @@
 
 Documentación del proyecto en español, en Markdown siguiendo los estándares de Obsidian
 (wikilinks `[[nota]]`, callouts, frontmatter de propiedades) — ver la skill
-`.claude/skills/obsidian-markdown/` para la sintaxis exacta.
+`.agents/skills/obsidian-markdown/` para la sintaxis exacta.
 
 No es documentación de usuario final ni un README público: es la base de conocimiento
 interna del proyecto (decisiones de arquitectura, runbooks, features en curso...). Ábrela
