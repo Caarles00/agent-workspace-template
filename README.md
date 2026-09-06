@@ -1,4 +1,4 @@
-# dev-skeleton
+# agent-workspace-template
 
 Plantilla base para arrancar un proyecto nuevo con agentes de código ya configurados: skills
 genéricas, convenciones de agentes/subagentes, y documentos de referencia de buenas
@@ -11,13 +11,13 @@ La forma más simple es el botón **Use this template** de GitHub (o su equivale
 crea un repo nuevo sin arrastrar el historial de la plantilla:
 
 ```bash
-gh repo create nombre-del-proyecto --template Caarles00/dev-skeleton --private --clone
+gh repo create nombre-del-proyecto --template Caarles00/agent-workspace-template --private --clone
 ```
 
 Si prefieres clonar a mano:
 
 ```bash
-git clone https://github.com/Caarles00/dev-skeleton.git nombre-del-proyecto
+git clone https://github.com/Caarles00/agent-workspace-template.git nombre-del-proyecto
 cd nombre-del-proyecto
 rm -rf .git && git init   # deshaz el historial de la plantilla
 ```
