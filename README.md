@@ -57,9 +57,9 @@ Todas agnósticas de lenguaje/framework:
 - **Script**: `scripts/install.sh` recrea los symlinks que falten. En Windows sin Developer Mode git
   materializa los symlinks como ficheros de texto; ahí usa `scripts/install.sh --copy`, que copia en
   vez de enlazar (y asume que actualizarás las copias a mano).
-- **Añadir skills externas**: `npx skills add <owner>/<repo>` instala en el canon, crea los symlinks
-  y registra origen y hash en `skills-lock.json` para poder actualizar después con el mismo comando.
-  Solo `tdd` entró por esa vía; las demás se copiaron a mano desde otro proyecto propio.
+- **Añadir y actualizar skills externas**: `npx skills add <owner>/<repo> --skill <nombre>` instala en el
+  canon, crea los symlinks y registra origen y hash en `skills-lock.json`. Todas las skills incluidas
+  entraron por esa vía, así que `npx skills update` las pone al día y avisa si se han editado en local.
 - **Metadatos por harness dentro de una skill**: `agents/openai.yaml` lo lee Codex; el campo
   `disable-model-invocation` del frontmatter lo lee Claude Code (fuerza invocación manual). Los demás
   harnesses ignoran lo que no conocen, así que conviven sin problema.
@@ -72,8 +72,15 @@ se añaden por proyecto, porque copiarlas sin adaptar el stack real no aporta na
 
 ## Licencia y contenido de terceros
 
-El repo es [MIT](LICENSE). Dos skills incluyen material con licencia propia:
+El repo es [MIT](LICENSE). Las skills proceden de estos repos (origen exacto y hash en `skills-lock.json`),
+cada uno con su propia licencia:
 
-- `security-review`: referencias derivadas de la [OWASP Cheat Sheet Series](https://cheatsheetseries.owasp.org/),
-  bajo CC BY-SA 4.0 (ver su `LICENSE`).
-- `tdd`: procede de [mattpocock/skills](https://github.com/mattpocock/skills), MIT.
+| Origen | Skills |
+|---|---|
+| [mattpocock/skills](https://github.com/mattpocock/skills) | `tdd`, `grilling`, `codebase-design`, `improve-codebase-architecture`, `domain-modeling` |
+| [dietrichgebert/ponytail](https://github.com/dietrichgebert/ponytail) | `ponytail` |
+| [obra/superpowers](https://github.com/obra/superpowers) | `requesting-code-review` |
+| [getsentry/skills](https://github.com/getsentry/skills) | `security-review` (incluye material de la [OWASP Cheat Sheet Series](https://cheatsheetseries.owasp.org/), CC BY-SA 4.0, ver su `LICENSE`) |
+| [wshobson/agents](https://github.com/wshobson/agents) | `api-design-principles` |
+| [vercel-labs/agent-skills](https://github.com/vercel-labs/agent-skills) | `web-design-guidelines` |
+| [kepano/obsidian-skills](https://github.com/kepano/obsidian-skills) | `obsidian-markdown` |
