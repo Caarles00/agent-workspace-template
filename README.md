@@ -58,9 +58,12 @@ All language/framework agnostic:
   and the other harnesses that follow the [skills.sh](https://skills.sh) convention. Edit only here.
 - **Per harness**: `.claude/skills/<skill>` is a relative symlink to the canon (Claude Code follows symlinks
   and deduplicates). For another harness that uses its own folder, add another set of symlinks the same way.
-- **Script**: `scripts/install.sh` recreates any missing symlinks. On Windows without Developer Mode git
-  materializes symlinks as text files; there, use `scripts/install.sh --copy`, which copies instead of
-  linking (and assumes you will update the copies by hand).
+- **Script**: `scripts/install.sh` creates any missing symlinks and redoes absolute or broken ones;
+  `scripts/install.sh --check` verifies them without changing anything. Run both after `npx skills add`
+  (on Windows the CLI creates absolute links) and before committing: if git has `core.symlinks=false`
+  a new link is stored as a plain file, and `--check` prints the `git update-index` line that fixes it.
+  On Windows without Developer Mode git materializes symlinks as text files; there, use
+  `scripts/install.sh --copy`, which copies instead of linking (and assumes you will update the copies by hand).
 - **Adding and updating external skills**: `npx skills add <owner>/<repo> --skill <name>` installs into the
   canon, creates the symlinks and records origin and hash in `skills-lock.json`. All included skills
   came in that way, so `npx skills update` brings them up to date and warns if they were edited locally.

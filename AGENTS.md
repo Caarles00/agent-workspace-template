@@ -15,7 +15,7 @@ for the template. Fill in this table as soon as you create the first one._
 
 - Launch a subagent only if it brings **real parallelism**, **broad search** (you want the conclusion, not the file dump) or **context isolation**. To read an already-known fact or make a trivial edit, do it directly.
 - **Massive fan-out (workflows / dozens of agents) only on explicit request.** Don't trigger it on your own initiative.
-- Keep the established pattern: when closing a feature, code review + security review in parallel (2 scoped agents; see "Skills for specific moments" below).
+- Keep the established pattern: when closing a feature, a code review, plus a security review when the change touches sensitive surface (see "Skills for specific moments" below).
 - Prune custom agents you don't use: each definition takes up context even when not launched.
 
 ---
@@ -54,44 +54,22 @@ Invoke it when you notice any of these signals:
 
 ### `requesting-code-review` + `security-review` — when completing a feature
 
-When you finish implementing a new feature, a new endpoint, or any significant business logic change, launch these two agents **in parallel** before calling the task done:
+When you finish implementing a new feature, a new endpoint, or any significant business logic change, launch a **code review** with the `requesting-code-review` skill before calling the task done: it verifies the work meets the requirements and the project's conventions.
 
-1. **Code review** — use the `requesting-code-review` skill to verify the work meets the requirements and the project's conventions.
-2. **Security review** — use the `security-review` skill to detect vulnerabilities (OWASP Top 10, injection, auth, XSS, etc.).
+Add a **security review** with the `security-review` skill (OWASP Top 10, injection, auth, XSS, etc.) only when the change touches the sensitive surface listed in [SECURITY.md](SECURITY.md): auth/sessions/permissions, payments, user-uploaded files, calls to external services with user data, or any new endpoint or entry point. When both apply, launch them **in parallel** as two scoped agents.
 
 **Don't invoke** (neither of them) for: trivial one-line bugfixes, CSS/style changes, documentation updates or unit tests without new logic.
 
 ---
 
-# Subagents — Model selection
-
-When launching subagents, pick the tier according to the task. Tiers are generic; the mapping to each
-provider's concrete models goes in the harness configuration file (e.g. CLAUDE.md for Claude Code).
-
-## Fast tier — quick, low-cost tasks
-
-- Finding files, reading code, grep, repo exploration
-- Answering factual questions about the code
-- Single-step tasks with no complex decisions
-- Exploration agents by default
-
-## Standard tier — everyday work
-
-This is the default tier, no need to specify it.
-
-- Writing and editing new code
-- Implementing features, fixing bugs
-- Generating translations, templates, CSS
-- General-purpose agents by default
-
-## High reasoning tier — critical decisions
-
-- Reviewing architecture or system design
-- Complex refactors with many dependencies
-- Critical security or performance decisions
-- Independent second opinion before merge
-- Planning or PR review agents
-
-## Golden rule
+## Subagent model tiers
 
 > Explore with the fast tier, build with the standard one, review what matters with the high reasoning one.
+
+| Tier | Use for |
+|---|---|
+| Fast | Finding and reading code, grep, factual questions about the codebase |
+| Standard (default) | Writing code, implementing features, fixing bugs, templates and CSS |
+| High reasoning | Architecture/design review, complex refactors, critical security or performance decisions, PR review |
+
+Tiers are generic; the mapping to each provider's models lives in the harness config (e.g. CLAUDE.md for Claude Code).

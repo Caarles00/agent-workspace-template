@@ -22,14 +22,17 @@
 - Before adding a new dependency, check that it is still maintained and has no known open CVEs.
 - Periodically review the package manager's vulnerability report (`npm audit`, `pip-audit`, `cargo audit`, etc.).
 
-## When closing a feature with significant business logic
+## When to run `security-review`
 
-Run the `security-review` skill (see [AGENTS.md](AGENTS.md)) before calling the task done. Pay extra attention if the feature touches:
+Run the `security-review` skill (see [AGENTS.md](AGENTS.md)) before calling the task done whenever the change touches any of:
 
+- Any new endpoint or entry point
 - Authentication, sessions or permission management
 - Payments or any financial data
 - Upload or processing of user files
 - Calls to external services with user data (possible SSRF)
+
+Changes outside that surface get the regular code review only.
 
 ## Reference
 
