@@ -2,7 +2,6 @@
 
 [![Stars](https://img.shields.io/github/stars/Caarles00/agent-workspace-template?style=flat&color=yellow)](https://github.com/Caarles00/agent-workspace-template/stargazers)
 [![License](https://img.shields.io/badge/license-MIT-green?style=flat)](LICENSE)
-[![Skills](https://skills.sh/b/Caarles00/agent-workspace-template)](https://skills.sh/Caarles00/agent-workspace-template)
 
 Base template for starting a new project with coding agents already configured: generic
 skills, agent/subagent conventions, and reference documents on good practices (security,
