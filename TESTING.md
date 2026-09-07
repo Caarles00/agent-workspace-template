@@ -1,7 +1,8 @@
 # Testing
 
 > Framework-agnostic reference conventions. Adjust to the project's actual test tool
-> (pytest, vitest, jest, cargo test...) when starting.
+> (pytest, vitest, jest, cargo test...) when starting. The `tdd` skill drives the red → green
+> loop; this file is the reference it consults for what to test and how.
 
 ## What to test
 
@@ -20,6 +21,7 @@
 
 ## Before calling a feature done
 
+- Don't report the suite green from memory — run it now and read the output (`verification-before-completion` skill).
 - Run the full suite, not just the new tests — a change can break something you didn't touch directly.
 - If the project measures coverage, don't chase 100% — chase having the logic with branches/edge cases covered.
 

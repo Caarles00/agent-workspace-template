@@ -12,6 +12,7 @@ an Obsidian vault if you want to navigate the wikilinks.
 
 - `architecture/` — design decisions, ADRs
 - `features/` — one note per significant feature: what was done and why
+- `plans/` — implementation plans, one per feature, named `YYYY-MM-DD-<feature>.md` (see the `writing-plans` skill)
 - `runbooks/` — operational procedures (deployment, incidents, recurring tasks)
 
 Adjust this structure to the project; the only fixed rule is that everything lives here,

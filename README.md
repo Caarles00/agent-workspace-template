@@ -48,7 +48,10 @@ All language/framework agnostic:
 |---|---|
 | `ponytail` | Forces the simplest solution — anti-overengineering |
 | `grilling` | Interrogates the plan before building, detects unresolved edge cases |
+| `writing-plans` / `executing-plans` | Turns a settled design into a task-by-task plan in `docs/plans/`, then executes it with checkpoints |
 | `tdd` | Guides the red→green loop: what a good test is, where tests go (seams), anti-patterns (implementation-coupled tests, tautological tests, "horizontal slicing") |
+| `systematic-debugging` | Four phases to the root cause before any fix — no patching symptoms |
+| `verification-before-completion` | Gate before saying "done": run the command, read the output, then claim it |
 | `requesting-code-review` | Review checklist when closing a feature |
 | `security-review` | OWASP Top 10 style security review |
 | `codebase-design` / `improve-codebase-architecture` | "Deep modules" vocabulary, spots opportunities to simplify the design |
@@ -57,6 +60,8 @@ All language/framework agnostic:
 | `frontend-design` | Aesthetic direction when building new UI: typography, palette, layout, avoiding the generic "AI look" |
 | `web-design-guidelines` | Frontend accessibility/UX review |
 | `obsidian-markdown` | Obsidian syntax for the documentation in `docs/` |
+| `find-skills` | Searches the [skills.sh](https://skills.sh) ecosystem when the installed set doesn't cover something |
+| `writing-skills` | Writes and edits skills the way `tdd` writes code: watch it fail first, then document |
 
 ## How skills are organized
 
@@ -87,8 +92,16 @@ All language/framework agnostic:
   your project's own content — fine, unless the team is mixed Windows/Unix, where the canon stops
   propagating to whoever gets the copies.
 - **Adding and updating external skills**: `npx skills add <owner>/<repo> --skill <name>` installs into the
-  canon, creates the symlinks and records origin and hash in `skills-lock.json`. All included skills
-  came in that way, so `npx skills update` brings them up to date and warns if they were edited locally.
+  canon, creates the symlinks and records origin and hash in `skills-lock.json` (the `find-skills` skill
+  covers the search step). All included skills came in that way, so `npx skills update` brings them up to
+  date and warns if they were edited locally.
+- **Some vendored skills are edited on purpose**: several arrive with cross-references to skills this
+  template doesn't vendor, or with path conventions that don't match this repo's `docs/`. Those are
+  rewritten in place — cross-references normalized to the house form `call the Skill tool with "<name>"`,
+  upstream's `docs/superpowers/plans/` rewritten to `docs/plans/` — so the "edited locally" warning is
+  expected for them, not a problem to undo. Treat an update as a merge, not an overwrite: read the
+  incoming diff and re-apply the rewrites. If a skill's upstream version drifts far enough that the
+  rewrite no longer fits, drop the skill rather than maintaining a fork of it here.
 - **Per-harness metadata inside a skill**: `agents/openai.yaml` is read by Codex; the
   `disable-model-invocation` frontmatter field is read by Claude Code (forces manual invocation). Other
   harnesses ignore what they don't know, so they coexist without issues.
@@ -108,9 +121,10 @@ each with its own license:
 |---|---|
 | [mattpocock/skills](https://github.com/mattpocock/skills) | `tdd`, `grilling`, `codebase-design`, `improve-codebase-architecture`, `domain-modeling` |
 | [dietrichgebert/ponytail](https://github.com/dietrichgebert/ponytail) | `ponytail` |
-| [obra/superpowers](https://github.com/obra/superpowers) | `requesting-code-review` |
+| [obra/superpowers](https://github.com/obra/superpowers) | `requesting-code-review`, `systematic-debugging`, `verification-before-completion`, `writing-plans`, `executing-plans`, `writing-skills` |
 | [getsentry/skills](https://github.com/getsentry/skills) | `security-review` (includes material from the [OWASP Cheat Sheet Series](https://cheatsheetseries.owasp.org/), CC BY-SA 4.0, see its `LICENSE`) |
 | [wshobson/agents](https://github.com/wshobson/agents) | `api-design-principles` |
 | [anthropics/skills](https://github.com/anthropics/skills) | `frontend-design` (Apache 2.0, see its `LICENSE.txt`) |
 | [vercel-labs/agent-skills](https://github.com/vercel-labs/agent-skills) | `web-design-guidelines` |
+| [vercel-labs/skills](https://github.com/vercel-labs/skills) | `find-skills` (a different repo from `vercel-labs/agent-skills` above) |
 | [kepano/obsidian-skills](https://github.com/kepano/obsidian-skills) | `obsidian-markdown` |
