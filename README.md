@@ -25,9 +25,13 @@ cd project-name
 rm -rf .git && git init   # drop the template's history
 ```
 
-Either way, on Windows run `scripts/install.sh --copy` afterwards: the per-harness skill folders are
-symlinks, and without Developer Mode git materializes them as plain text files (see
-[How skills are organized](#how-skills-are-organized)).
+Then wire the skills, which depends on your harness rather than your OS:
+
+- **Codex, OpenCode and the rest of the [skills.sh](https://skills.sh) crowd**: nothing to do, they read
+  `.agents/skills/` directly.
+- **Claude Code, Cursor**: `sh scripts/install.sh`. On Windows run it from Git Bash and with `--copy`
+  instead, because without Developer Mode git materializes the symlinks as plain text files (see
+  [How skills are organized](#how-skills-are-organized)).
 
 Then, in order:
 
@@ -57,7 +61,8 @@ All language/framework agnostic:
 ## How skills are organized
 
 - **Canonical source**: `.agents/skills/<skill>/`. This is the folder shared by Codex, Cursor, OpenCode
-  and the other harnesses that follow the [skills.sh](https://skills.sh) convention. Edit only here.
+  and the other harnesses that follow the [skills.sh](https://skills.sh) convention. Edit only here — under
+  `--copy` an edit made in a per-harness folder is lost on the next run, which `rm -rf`s the destination first.
 - **Per harness**: a harness that reads its own folder instead of the canon gets one relative symlink per
   skill (Claude Code follows symlinks and deduplicates). `scripts/install.sh` already wires `.claude/skills`
   and `.cursor/skills`, and skips whichever of those folders the project doesn't have; for another harness,
@@ -76,6 +81,11 @@ All language/framework agnostic:
   ```bash
   git update-index --skip-worktree $(git ls-files .claude/skills .cursor/skills)   # --no-skip-worktree to undo
   ```
+
+  That line only bites when the links are already tracked, which is the `--template` route. After
+  `rm -rf .git && git init` nothing is tracked yet, so it is a silent no-op and the copies simply become
+  your project's own content — fine, unless the team is mixed Windows/Unix, where the canon stops
+  propagating to whoever gets the copies.
 - **Adding and updating external skills**: `npx skills add <owner>/<repo> --skill <name>` installs into the
   canon, creates the symlinks and records origin and hash in `skills-lock.json`. All included skills
   came in that way, so `npx skills update` brings them up to date and warns if they were edited locally.
