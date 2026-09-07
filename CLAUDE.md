@@ -35,5 +35,5 @@ The general doctrine (when to launch subagents, when to invoke each skill, model
 [AGENTS.md](AGENTS.md) and is imported above with `@AGENTS.md`. Only what doesn't apply to other harnesses goes here:
 
 - **Tier to model mapping**: fast → `haiku`, standard → `sonnet` (default), high reasoning → `opus`.
-- Skills can also be invoked as slash commands (`/ponytail lite|full|ultra`, `/grilling`, `/tdd`...).
+- Skills can also be invoked as slash commands (`/ponytail lite|full|ultra`, `/grilling`, `/writing-plans`, `/tdd`...).
 - Project-specific subagents go in `.claude/agents/` (see [.claude/agents/README.md](.claude/agents/README.md)).
