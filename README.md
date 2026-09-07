@@ -25,7 +25,9 @@ cd project-name
 rm -rf .git && git init   # drop the template's history
 ```
 
-On Windows, then run `scripts/install.sh --copy` (see [How skills are organized](#how-skills-are-organized)).
+Either way, on Windows run `scripts/install.sh --copy` afterwards: the per-harness skill folders are
+symlinks, and without Developer Mode git materializes them as plain text files (see
+[How skills are organized](#how-skills-are-organized)).
 
 Then, in order:
 
@@ -56,14 +58,24 @@ All language/framework agnostic:
 
 - **Canonical source**: `.agents/skills/<skill>/`. This is the folder shared by Codex, Cursor, OpenCode
   and the other harnesses that follow the [skills.sh](https://skills.sh) convention. Edit only here.
-- **Per harness**: `.claude/skills/<skill>` is a relative symlink to the canon (Claude Code follows symlinks
-  and deduplicates). For another harness that uses its own folder, add another set of symlinks the same way.
+- **Per harness**: a harness that reads its own folder instead of the canon gets one relative symlink per
+  skill (Claude Code follows symlinks and deduplicates). `scripts/install.sh` already wires `.claude/skills`
+  and `.cursor/skills`, and skips whichever of those folders the project doesn't have; for another harness,
+  add a line to the script's `TARGETS`. Harnesses that follow the skills.sh convention read `.agents/skills/`
+  directly and need nothing.
 - **Script**: `scripts/install.sh` creates any missing symlinks and redoes absolute or broken ones;
   `scripts/install.sh --check` verifies them without changing anything. Run both after `npx skills add`
   (on Windows the CLI creates absolute links) and before committing: if git has `core.symlinks=false`
   a new link is stored as a plain file, and `--check` prints the `git update-index` line that fixes it.
   On Windows without Developer Mode git materializes symlinks as text files; there, use
   `scripts/install.sh --copy`, which copies instead of linking (and assumes you will update the copies by hand).
+  Those copies sit on paths git tracks as symlinks, so it reports them as deleted from then on: tell git to
+  ignore the difference, or a stray `git add -A` will drop the links and break the repo for everyone on
+  Mac/Linux. `--copy` users should run it once, right after the copy:
+
+  ```bash
+  git update-index --skip-worktree $(git ls-files .claude/skills .cursor/skills)   # --no-skip-worktree to undo
+  ```
 - **Adding and updating external skills**: `npx skills add <owner>/<repo> --skill <name>` installs into the
   canon, creates the symlinks and records origin and hash in `skills-lock.json`. All included skills
   came in that way, so `npx skills update` brings them up to date and warns if they were edited locally.
