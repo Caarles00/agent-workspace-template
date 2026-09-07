@@ -1,37 +1,37 @@
-# Agentes específicos del proyecto
+# Project-specific agents
 
-Esta carpeta empieza vacía a propósito: los subagentes personalizados dependen del stack
-de cada proyecto (backend-feature en FastAPI no sirve igual en Rails), así que se recrean
-cada vez en vez de copiarse.
+This folder starts empty on purpose: custom subagents depend on each project's stack
+(a backend-feature agent for FastAPI is not the same in Rails), so they are recreated
+each time instead of copied.
 
-## Cuándo crear uno
+## When to create one
 
-Solo cuando un tipo de tarea se repite lo bastante como para justificar un system prompt
-dedicado — típicamente: implementar features de backend, crear/editar vistas de frontend,
-y escribir tests. Si el proyecto es pequeño o el patrón no se repite, no hace falta ninguno.
+Only when a type of task repeats often enough to justify a dedicated system prompt —
+typically: implementing backend features, creating/editing frontend views, and writing
+tests. If the project is small or the pattern doesn't repeat, none is needed.
 
-## Molde
+## Template
 
-Cada agente es un fichero `.claude/agents/<nombre>.md` con frontmatter:
+Each agent is a `.claude/agents/<name>.md` file with frontmatter:
 
 ```markdown
 ---
-name: nombre-corto
-description: Una frase — cuándo se lanza este agente y qué produce.
-tools: [Read, Write, Edit, Bash, Grep, Glob]   # ajusta al mínimo necesario
-model: sonnet   # tier estándar; mapeo de tiers en CLAUDE.md, criterio en AGENTS.md
+name: short-name
+description: One sentence — when this agent is launched and what it produces.
+tools: [Read, Write, Edit, Bash, Grep, Glob]   # trim to the minimum needed
+model: sonnet   # standard tier; tier mapping in CLAUDE.md, criteria in AGENTS.md
 ---
 
-Instrucciones del agente: convenciones del proyecto, patrones a seguir,
-qué comprobar antes de terminar (tests, lint, etc.)
+Agent instructions: project conventions, patterns to follow,
+what to check before finishing (tests, lint, etc.)
 ```
 
-## Ejemplos a recrear según el stack
+## Examples to recreate depending on the stack
 
-- **Backend**: implementar endpoints/rutas y modelos de datos siguiendo las convenciones
-  del ORM/framework del proyecto.
-- **Frontend**: crear o modificar vistas/componentes siguiendo el patrón de UI del proyecto
+- **Backend**: implement endpoints/routes and data models following the conventions
+  of the project's ORM/framework.
+- **Frontend**: create or modify views/components following the project's UI pattern
   (SSR+HTMX, SPA, etc.).
-- **Testing**: escribir tests para el código nuevo, con el framework de test del proyecto.
+- **Testing**: write tests for new code, with the project's test framework.
 
-Actualiza la tabla de `AGENTS.md` en cuanto crees el primero.
+Update the table in `AGENTS.md` as soon as you create the first one.

@@ -1,37 +1,37 @@
-# Seguridad
+# Security
 
-> Checklist de referencia, agnóstica de stack. La skill `security-review` (`.agents/skills/security-review/`)
-> la aplica automáticamente al revisar código; esto es la versión legible para humanos.
+> Stack-agnostic reference checklist. The `security-review` skill (`.agents/skills/security-review/`)
+> applies it automatically when reviewing code; this is the human-readable version.
 
-## Al añadir cualquier endpoint o punto de entrada
+## When adding any endpoint or entry point
 
-- **Validación de entrada**: nunca confíes en datos del cliente (body, query, headers, cookies). Valida tipo, longitud y rango antes de usarlos.
-- **Autenticación y autorización**: confirma no solo *quién* es el usuario sino *si puede* hacer esa acción sobre ese recurso concreto (evita IDOR — comprobar ownership, no solo login).
-- **Inyección**: usa siempre queries parametrizadas/ORM; nunca concatenes input del usuario en SQL, comandos de shell, o templates sin escapar.
-- **XSS**: escapa toda salida que se renderiza en HTML; si el framework de templates ya auto-escapa, no lo desactives sin motivo explícito y documentado.
-- **CSRF**: cualquier endpoint que muta estado desde un formulario/sesión de navegador necesita protección CSRF salvo que sea una API con auth por token.
+- **Input validation**: never trust client data (body, query, headers, cookies). Validate type, length and range before using it.
+- **Authentication and authorization**: confirm not only *who* the user is but *whether they may* perform that action on that specific resource (avoid IDOR — check ownership, not just login).
+- **Injection**: always use parameterized queries/ORM; never concatenate user input into SQL, shell commands, or unescaped templates.
+- **XSS**: escape all output rendered as HTML; if the template framework already auto-escapes, don't disable it without an explicit, documented reason.
+- **CSRF**: any endpoint that mutates state from a browser form/session needs CSRF protection unless it is an API with token-based auth.
 
-## Secretos y configuración
+## Secrets and configuration
 
-- Ningún secreto (API key, credencial, token) en el repo, ni en tests, ni en commits antiguos si se detecta a tiempo.
-- Variables de entorno para todo lo sensible; `.env.example` sin valores reales versionado, `.env` en `.gitignore`.
-- Rota cualquier secreto que haya llegado a estar en un commit, aunque se elimine después.
+- No secrets (API keys, credentials, tokens) in the repo, nor in tests, nor in old commits if caught in time.
+- Environment variables for everything sensitive; `.env.example` without real values committed, `.env` in `.gitignore`.
+- Rotate any secret that has ever landed in a commit, even if removed afterwards.
 
-## Dependencias
+## Dependencies
 
-- Antes de añadir una dependencia nueva, comprueba que sigue mantenida y no tiene CVEs abiertos conocidos.
-- Revisa periódicamente el listado de vulnerabilidades del gestor de paquetes (`npm audit`, `pip-audit`, `cargo audit`, etc.).
+- Before adding a new dependency, check that it is still maintained and has no known open CVEs.
+- Periodically review the package manager's vulnerability report (`npm audit`, `pip-audit`, `cargo audit`, etc.).
 
-## Al cerrar una feature con lógica de negocio significativa
+## When closing a feature with significant business logic
 
-Lanza la skill `security-review` (ver [AGENTS.md](AGENTS.md)) antes de dar la tarea por terminada. Presta atención extra si la feature toca:
+Run the `security-review` skill (see [AGENTS.md](AGENTS.md)) before calling the task done. Pay extra attention if the feature touches:
 
-- Autenticación, sesiones o gestión de permisos
-- Pagos o cualquier dato financiero
-- Subida o procesamiento de ficheros de usuario
-- Llamadas a servicios externos con datos del usuario (posible SSRF)
+- Authentication, sessions or permission management
+- Payments or any financial data
+- Upload or processing of user files
+- Calls to external services with user data (possible SSRF)
 
-## Referencia
+## Reference
 
-- [OWASP Top 10](https://owasp.org/www-project-top-ten/) — checklist de referencia general
-- [OWASP Cheat Sheet Series](https://cheatsheetseries.owasp.org/) — guías concretas por tipo de vulnerabilidad
+- [OWASP Top 10](https://owasp.org/www-project-top-ten/) — general reference checklist
+- [OWASP Cheat Sheet Series](https://cheatsheetseries.owasp.org/) — concrete guides per vulnerability type

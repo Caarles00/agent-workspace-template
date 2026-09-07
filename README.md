@@ -1,86 +1,86 @@
 # agent-workspace-template
 
-Plantilla base para arrancar un proyecto nuevo con agentes de código ya configurados: skills
-genéricas, convenciones de agentes/subagentes, y documentos de referencia de buenas
-prácticas (seguridad, testing), todo agnóstico de lenguaje, framework y harness (Claude Code,
-Codex, Cursor, OpenCode...).
+Base template for starting a new project with coding agents already configured: generic
+skills, agent/subagent conventions, and reference documents on good practices (security,
+testing), all agnostic of language, framework and harness (Claude Code, Codex, Cursor,
+OpenCode...).
 
-## Uso
+## Usage
 
-La forma más simple es el botón **Use this template** de GitHub (o su equivalente en CLI), que
-crea un repo nuevo sin arrastrar el historial de la plantilla:
-
-```bash
-gh repo create nombre-del-proyecto --template Caarles00/agent-workspace-template --private --clone
-```
-
-Si prefieres clonar a mano:
+The simplest way is GitHub's **Use this template** button (or its CLI equivalent), which
+creates a new repo without carrying over the template's history:
 
 ```bash
-git clone https://github.com/Caarles00/agent-workspace-template.git nombre-del-proyecto
-cd nombre-del-proyecto
-rm -rf .git && git init   # deshaz el historial de la plantilla
+gh repo create project-name --template Caarles00/agent-workspace-template --private --clone
 ```
 
-En Windows, ejecuta después `scripts/install.sh --copy` (ver [Cómo están organizadas las skills](#cómo-están-organizadas-las-skills)).
+If you prefer to clone by hand:
 
-Luego, en orden:
+```bash
+git clone https://github.com/Caarles00/agent-workspace-template.git project-name
+cd project-name
+rm -rf .git && git init   # drop the template's history
+```
 
-1. Rellena [CLAUDE.md](CLAUDE.md) con el stack real (backend, frontend, gestor de paquetes, convenciones de código, quirks de librerías). La doctrina compartida entre harnesses (subagentes, skills, tiers de modelo) está en [AGENTS.md](AGENTS.md); CLAUDE.md la importa con `@AGENTS.md`.
-2. Ajusta [SECURITY.md](SECURITY.md) y [TESTING.md](TESTING.md) si el stack tiene checklist propio (p. ej. herramientas de audit de dependencias, framework de test concreto).
-3. Cuando el proyecto tenga patrones de tarea que se repiten (features de backend, vistas de frontend, tests), crea agentes en `.claude/agents/` siguiendo [.claude/agents/README.md](.claude/agents/README.md) y añádelos a la tabla de [AGENTS.md](AGENTS.md).
-4. Añade skills específicas del stack si aplica (framework de backend, librería de UI/animación, proveedor de datos como Supabase, etc.) — no vienen incluidas porque dependen del proyecto.
+On Windows, then run `scripts/install.sh --copy` (see [How skills are organized](#how-skills-are-organized)).
 
-## Qué incluye `.agents/skills/`
+Then, in order:
 
-Todas agnósticas de lenguaje/framework:
+1. Fill in [CLAUDE.md](CLAUDE.md) with the real stack (backend, frontend, package manager, code conventions, library quirks) and the documentation language (English by default). The doctrine shared across harnesses (subagents, skills, model tiers) lives in [AGENTS.md](AGENTS.md); CLAUDE.md imports it with `@AGENTS.md`.
+2. Adjust [SECURITY.md](SECURITY.md) and [TESTING.md](TESTING.md) if the stack has its own checklist (e.g. dependency audit tools, a specific test framework).
+3. Once the project has recurring task patterns (backend features, frontend views, tests), create agents in `.claude/agents/` following [.claude/agents/README.md](.claude/agents/README.md) and add them to the table in [AGENTS.md](AGENTS.md).
+4. Add stack-specific skills if applicable (backend framework, UI/animation library, data provider such as Supabase, etc.) — they are not included because they depend on the project.
 
-| Skill | Para qué |
+## What `.agents/skills/` includes
+
+All language/framework agnostic:
+
+| Skill | What for |
 |---|---|
-| `ponytail` | Fuerza la solución más simple — anti-overengineering |
-| `grilling` | Interroga el plan antes de construir, detecta casos borde sin resolver |
-| `tdd` | Guía el bucle rojo→verde: qué es un buen test, dónde van los tests (seams), anti-patrones (tests acoplados a implementación, tautológicos, "horizontal slicing") |
-| `requesting-code-review` | Checklist de revisión al cerrar una feature |
-| `security-review` | Revisión de seguridad tipo OWASP Top 10 |
-| `codebase-design` / `improve-codebase-architecture` | Vocabulario de "deep modules", detecta oportunidades de simplificar el diseño |
-| `domain-modeling` | Fijar terminología de dominio (ubiquitous language) |
-| `api-design-principles` | Principios de diseño REST/GraphQL |
-| `web-design-guidelines` | Revisión de accesibilidad/UX del frontend |
-| `obsidian-markdown` | Sintaxis de Obsidian para la documentación en `docs.local/` |
+| `ponytail` | Forces the simplest solution — anti-overengineering |
+| `grilling` | Interrogates the plan before building, detects unresolved edge cases |
+| `tdd` | Guides the red→green loop: what a good test is, where tests go (seams), anti-patterns (implementation-coupled tests, tautological tests, "horizontal slicing") |
+| `requesting-code-review` | Review checklist when closing a feature |
+| `security-review` | OWASP Top 10 style security review |
+| `codebase-design` / `improve-codebase-architecture` | "Deep modules" vocabulary, spots opportunities to simplify the design |
+| `domain-modeling` | Pin down domain terminology (ubiquitous language) |
+| `api-design-principles` | REST/GraphQL design principles |
+| `web-design-guidelines` | Frontend accessibility/UX review |
+| `obsidian-markdown` | Obsidian syntax for the documentation in `docs/` |
 
-## Cómo están organizadas las skills
+## How skills are organized
 
-- **Fuente canónica**: `.agents/skills/<skill>/`. Es la carpeta que comparten Codex, Cursor, OpenCode
-  y el resto de harnesses que siguen la convención de [skills.sh](https://skills.sh). Se edita solo aquí.
-- **Por harness**: `.claude/skills/<skill>` es un symlink relativo al canon (Claude Code sigue symlinks
-  y deduplica). Para otro harness que use carpeta propia, se añade otro juego de symlinks igual.
-- **Script**: `scripts/install.sh` recrea los symlinks que falten. En Windows sin Developer Mode git
-  materializa los symlinks como ficheros de texto; ahí usa `scripts/install.sh --copy`, que copia en
-  vez de enlazar (y asume que actualizarás las copias a mano).
-- **Añadir y actualizar skills externas**: `npx skills add <owner>/<repo> --skill <nombre>` instala en el
-  canon, crea los symlinks y registra origen y hash en `skills-lock.json`. Todas las skills incluidas
-  entraron por esa vía, así que `npx skills update` las pone al día y avisa si se han editado en local.
-- **Metadatos por harness dentro de una skill**: `agents/openai.yaml` lo lee Codex; el campo
-  `disable-model-invocation` del frontmatter lo lee Claude Code (fuerza invocación manual). Los demás
-  harnesses ignoran lo que no conocen, así que conviven sin problema.
+- **Canonical source**: `.agents/skills/<skill>/`. This is the folder shared by Codex, Cursor, OpenCode
+  and the other harnesses that follow the [skills.sh](https://skills.sh) convention. Edit only here.
+- **Per harness**: `.claude/skills/<skill>` is a relative symlink to the canon (Claude Code follows symlinks
+  and deduplicates). For another harness that uses its own folder, add another set of symlinks the same way.
+- **Script**: `scripts/install.sh` recreates any missing symlinks. On Windows without Developer Mode git
+  materializes symlinks as text files; there, use `scripts/install.sh --copy`, which copies instead of
+  linking (and assumes you will update the copies by hand).
+- **Adding and updating external skills**: `npx skills add <owner>/<repo> --skill <name>` installs into the
+  canon, creates the symlinks and records origin and hash in `skills-lock.json`. All included skills
+  came in that way, so `npx skills update` brings them up to date and warns if they were edited locally.
+- **Per-harness metadata inside a skill**: `agents/openai.yaml` is read by Codex; the
+  `disable-model-invocation` frontmatter field is read by Claude Code (forces manual invocation). Other
+  harnesses ignore what they don't know, so they coexist without issues.
 
-## Qué NO incluye (a propósito)
+## What it does NOT include (on purpose)
 
-Agentes concretos (`backend-feature`, `frontend-template`, `testing`...) y skills atadas
-a un stack (framework de backend, librería de animación, proveedor cloud) — se recrean o
-se añaden por proyecto, porque copiarlas sin adaptar el stack real no aporta nada.
+Concrete agents (`backend-feature`, `frontend-template`, `testing`...) and skills tied to a
+stack (backend framework, animation library, cloud provider) — they are recreated or added
+per project, because copying them without adapting to the real stack adds nothing.
 
-## Licencia y contenido de terceros
+## License and third-party content
 
-El repo es [MIT](LICENSE). Las skills proceden de estos repos (origen exacto y hash en `skills-lock.json`),
-cada uno con su propia licencia:
+The repo is [MIT](LICENSE). The skills come from these repos (exact origin and hash in `skills-lock.json`),
+each with its own license:
 
-| Origen | Skills |
+| Origin | Skills |
 |---|---|
 | [mattpocock/skills](https://github.com/mattpocock/skills) | `tdd`, `grilling`, `codebase-design`, `improve-codebase-architecture`, `domain-modeling` |
 | [dietrichgebert/ponytail](https://github.com/dietrichgebert/ponytail) | `ponytail` |
 | [obra/superpowers](https://github.com/obra/superpowers) | `requesting-code-review` |
-| [getsentry/skills](https://github.com/getsentry/skills) | `security-review` (incluye material de la [OWASP Cheat Sheet Series](https://cheatsheetseries.owasp.org/), CC BY-SA 4.0, ver su `LICENSE`) |
+| [getsentry/skills](https://github.com/getsentry/skills) | `security-review` (includes material from the [OWASP Cheat Sheet Series](https://cheatsheetseries.owasp.org/), CC BY-SA 4.0, see its `LICENSE`) |
 | [wshobson/agents](https://github.com/wshobson/agents) | `api-design-principles` |
 | [vercel-labs/agent-skills](https://github.com/vercel-labs/agent-skills) | `web-design-guidelines` |
 | [kepano/obsidian-skills](https://github.com/kepano/obsidian-skills) | `obsidian-markdown` |

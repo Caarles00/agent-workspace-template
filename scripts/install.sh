@@ -1,13 +1,13 @@
 #!/usr/bin/env sh
-# Enlaza (o copia con --copy) cada skill de .agents/skills/ en las carpetas de los harnesses
-# presentes en el proyecto. Idempotente: no toca lo que ya está bien.
+# Links (or copies with --copy) each skill in .agents/skills/ into the folders of the harnesses
+# present in the project. Idempotent: leaves alone whatever is already correct.
 set -eu
 
 cd "$(dirname "$0")/.."
 MODE=link
 [ "${1:-}" = "--copy" ] && MODE=copy
 
-# harness:carpeta-de-skills. Añade una línea por harness que use carpeta propia.
+# harness:skills-folder. Add one line per harness that uses its own folder.
 TARGETS="
 .claude:.claude/skills
 .cursor:.cursor/skills
