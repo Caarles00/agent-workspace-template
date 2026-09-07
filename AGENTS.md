@@ -1,97 +1,97 @@
-# Agentes del proyecto
+# Project agents
 
-## Agentes especializados
+## Specialized agents
 
-_Vacía hasta que el proyecto tenga agentes propios — ver [.claude/agents/README.md](.claude/agents/README.md)
-para el molde. Rellena esta tabla en cuanto crees el primero._
+_Empty until the project has its own agents — see [.claude/agents/README.md](.claude/agents/README.md)
+for the template. Fill in this table as soon as you create the first one._
 
-| Agente | Cuándo | Modelo | Archivo |
-|--------|--------|--------|---------|
+| Agent | When | Model | File |
+|-------|------|-------|------|
 | — | — | — | — |
 
 ---
 
-## Cuándo lanzar un subagente
+## When to launch a subagent
 
-- Lanza un subagente solo si aporta **paralelismo real**, **búsqueda amplia** (quieres la conclusión, no el volcado de archivos) o **aislamiento de contexto**. Para leer un dato ya conocido o un edit trivial, hazlo directo.
-- **Fan-out masivo (workflows / decenas de agentes) solo con petición explícita.** No dispararlo por iniciativa propia.
-- Mantén el patrón establecido: al cerrar una feature, revisión de código + seguridad en paralelo (2 agentes acotados; ver "Skills de uso puntual" más abajo).
-- Poda los custom agents que no uses: cada ficha ocupa contexto aunque no se lance.
-
----
-
-## Skills de uso puntual
-
-### `ponytail` — fuerza la solución más simple que funciona
-
-Invócala cuando notes alguna de estas señales:
-
-**Sí invocar:**
-- Estás a punto de crear un archivo nuevo para algo que podría ir en uno existente
-- Te preguntas "¿necesito un `service` para esto?" antes de tener dos casos de uso que lo compartan
-- Vas a añadir una dependencia nueva — ¿la stdlib o algo ya instalado lo cubre?
-- Estás creando una clase o helper para algo que ocurre una sola vez
-- Alguien pide "añadir caché" sin benchmark que lo justifique
-- Estás refactorizando sin que nadie lo haya pedido
-
-**No invocar:**
-- Lógica de seguridad, auth o pagos — ponytail no simplifica esto
-- Cuando necesitas entender la causa raíz de un bug primero
-
-Niveles: `lite` (sugiere alternativa), `full` (por defecto), `ultra` (extremista YAGNI). Cada harness expone la skill a su manera (slash command, mención por nombre...); el nivel se indica al invocarla.
-
-### `grilling` — interroga al usuario antes de construir
-
-Invócala cuando notes alguna de estas señales:
-
-**Sí invocar:**
-- Vas a empezar una feature nueva, un endpoint nuevo, o cualquier cambio significativo de lógica de negocio
-- El plan tiene casos borde sin resolver, o el diseño da por hecho algo que no se ha confirmado
-- El usuario usa alguna frase disparadora de "grill" o pide que le cuestiones el planteamiento
-
-**No invocar:**
-- Bugfixes triviales de una línea, cambios de CSS/estilos, actualizaciones de documentación o tests unitarios sin lógica nueva
-
-### `requesting-code-review` + `security-review` — al completar una feature
-
-Al terminar de implementar una feature nueva, un endpoint nuevo, o cualquier cambio significativo de lógica de negocio, lanza **en paralelo** estos dos agentes antes de dar la tarea por terminada:
-
-1. **Revisión de código** — usa la skill `requesting-code-review` para verificar que el trabajo cumple los requisitos y las convenciones del proyecto.
-2. **Revisión de seguridad** — usa la skill `security-review` para detectar vulnerabilidades (OWASP Top 10, inyección, auth, XSS, etc.).
-
-**No invocar** (ninguna de las dos) para: bugfixes triviales de una línea, cambios de CSS/estilos, actualizaciones de documentación o tests unitarios sin lógica nueva.
+- Launch a subagent only if it brings **real parallelism**, **broad search** (you want the conclusion, not the file dump) or **context isolation**. To read an already-known fact or make a trivial edit, do it directly.
+- **Massive fan-out (workflows / dozens of agents) only on explicit request.** Don't trigger it on your own initiative.
+- Keep the established pattern: when closing a feature, code review + security review in parallel (2 scoped agents; see "Skills for specific moments" below).
+- Prune custom agents you don't use: each definition takes up context even when not launched.
 
 ---
 
-# Subagentes — Selección de modelo
+## Skills for specific moments
 
-Cuando lances subagentes, elige el tier según la tarea. Los tiers son genéricos; el mapeo a modelos
-concretos de cada proveedor va en el fichero de configuración del harness (p. ej. CLAUDE.md para Claude Code).
+### `ponytail` — forces the simplest solution that works
 
-## Tier rápido — tareas rápidas y de bajo coste
+Invoke it when you notice any of these signals:
 
-- Buscar archivos, leer código, grep, exploración del repo
-- Responder preguntas factuales sobre el código
-- Tareas de un solo paso sin decisiones complejas
-- Agentes de exploración por defecto
+**Do invoke:**
+- You are about to create a new file for something that could go in an existing one
+- You wonder "do I need a `service` for this?" before having two use cases that share it
+- You are going to add a new dependency — does the stdlib or something already installed cover it?
+- You are creating a class or helper for something that happens only once
+- Someone asks to "add caching" without a benchmark that justifies it
+- You are refactoring without anyone having asked for it
 
-## Tier estándar — trabajo habitual
+**Don't invoke:**
+- Security, auth or payment logic — ponytail doesn't simplify this
+- When you first need to understand the root cause of a bug
 
-Es el tier por defecto, no hace falta indicarlo.
+Levels: `lite` (suggests an alternative), `full` (default), `ultra` (YAGNI extremist). Each harness exposes the skill its own way (slash command, mention by name...); the level is given when invoking it.
 
-- Escribir y editar código nuevo
-- Implementar features, corregir bugs
-- Generar traducciones, plantillas, CSS
-- Agentes de propósito general por defecto
+### `grilling` — interrogates the user before building
 
-## Tier de razonamiento alto — decisiones críticas
+Invoke it when you notice any of these signals:
 
-- Revisar arquitectura o diseño de sistema
-- Refactors complejos con muchas dependencias
-- Decisiones de seguridad o rendimiento críticas
-- Segunda opinión independiente antes de merge
-- Agentes de planificación o revisión de PR
+**Do invoke:**
+- You are about to start a new feature, a new endpoint, or any significant business logic change
+- The plan has unresolved edge cases, or the design assumes something that hasn't been confirmed
+- The user uses a "grill" trigger phrase or asks you to challenge the approach
 
-## Regla de oro
+**Don't invoke:**
+- Trivial one-line bugfixes, CSS/style changes, documentation updates or unit tests without new logic
 
-> Explora con el tier rápido, construye con el estándar, revisa lo que importa con el de razonamiento alto.
+### `requesting-code-review` + `security-review` — when completing a feature
+
+When you finish implementing a new feature, a new endpoint, or any significant business logic change, launch these two agents **in parallel** before calling the task done:
+
+1. **Code review** — use the `requesting-code-review` skill to verify the work meets the requirements and the project's conventions.
+2. **Security review** — use the `security-review` skill to detect vulnerabilities (OWASP Top 10, injection, auth, XSS, etc.).
+
+**Don't invoke** (neither of them) for: trivial one-line bugfixes, CSS/style changes, documentation updates or unit tests without new logic.
+
+---
+
+# Subagents — Model selection
+
+When launching subagents, pick the tier according to the task. Tiers are generic; the mapping to each
+provider's concrete models goes in the harness configuration file (e.g. CLAUDE.md for Claude Code).
+
+## Fast tier — quick, low-cost tasks
+
+- Finding files, reading code, grep, repo exploration
+- Answering factual questions about the code
+- Single-step tasks with no complex decisions
+- Exploration agents by default
+
+## Standard tier — everyday work
+
+This is the default tier, no need to specify it.
+
+- Writing and editing new code
+- Implementing features, fixing bugs
+- Generating translations, templates, CSS
+- General-purpose agents by default
+
+## High reasoning tier — critical decisions
+
+- Reviewing architecture or system design
+- Complex refactors with many dependencies
+- Critical security or performance decisions
+- Independent second opinion before merge
+- Planning or PR review agents
+
+## Golden rule
+
+> Explore with the fast tier, build with the standard one, review what matters with the high reasoning one.

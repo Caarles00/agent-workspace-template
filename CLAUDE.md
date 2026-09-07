@@ -1,38 +1,39 @@
 @AGENTS.md
 
-# TEN EN CUENTA ESTAS COSAS SIEMPRE
+# ALWAYS KEEP THIS IN MIND
 
-> Plantilla base. Rellena cada sección al arrancar un proyecto nuevo y borra este aviso.
+> Base template. Fill in each section when starting a new project and delete this notice.
 
 ## General
-- Revisa si hay skills disponibles antes de implementar algo
-- Revisa el código generado buscando posibles errores antes de darlo por hecho
-- La documentación debe estar en español, guardada en `docs.local/` y actualizada siguiendo los estándares de Obsidian y Markdown
+- Check whether there are skills available before implementing something
+- Review generated code for possible errors before calling it done
+- Project documentation lives in `docs/` and follows Obsidian and Markdown conventions (see the `obsidian-markdown` skill)
+- **Documentation language**: English _(set this when starting the project; agents write all `docs/` content in this language)_
 
-## Stack del proyecto
-- **Backend**: _(framework, lenguaje, ORM/DB, cola/cache si aplica)_
-- **Frontend**: _(framework o SSR+HTMX/vanilla, con o sin build step)_
-- **Servicios locales**: _(cómo se levantan DB/Redis/etc. en local — Docker Compose, servicios nativos...)_
-- **Gestor de paquetes**: _(uv, npm/pnpm, cargo... — indica el comando canónico para añadir dependencias)_
+## Project stack
+- **Backend**: _(framework, language, ORM/DB, queue/cache if applicable)_
+- **Frontend**: _(framework or SSR+HTMX/vanilla, with or without build step)_
+- **Local services**: _(how DB/Redis/etc. are started locally — Docker Compose, native services...)_
+- **Package manager**: _(uv, npm/pnpm, cargo... — state the canonical command for adding dependencies)_
 
-## Convenciones de código
-- _(estilo del ORM/lenguaje: p. ej. SQLAlchemy 2.x con `Mapped`+`mapped_column`, no el estilo antiguo)_
-- _(cómo se resuelven imports circulares o dependencias de tipos)_
-- Nunca escribir comentarios que expliquen QUÉ hace el código; solo escribir comentarios cuando el POR QUÉ no sea obvio
+## Code conventions
+- _(ORM/language style: e.g. SQLAlchemy 2.x with `Mapped`+`mapped_column`, not the legacy style)_
+- _(how circular imports or type dependencies are resolved)_
+- Never write comments that explain WHAT the code does; only write comments when the WHY is not obvious
 
-## Quirks conocidos de las librerías instaladas
-- _(anota aquí los falsos positivos de linter/type-checker o comportamientos no obvios de las dependencias del proyecto, a medida que los descubras)_
+## Known quirks of installed libraries
+- _(note here linter/type-checker false positives or non-obvious behaviors of the project's dependencies, as you discover them)_
 
 ## Frontend
-- Todo frontend debe ser responsive
-- _(preferencia de interactividad: HTMX, framework SPA, vanilla JS... y cuándo usar cada uno)_
-- Preservar siempre la sintaxis de templates y la lógica existente al modificarlos
+- All frontend must be responsive
+- _(interactivity preference: HTMX, SPA framework, vanilla JS... and when to use each)_
+- Always preserve template syntax and existing logic when modifying templates
 
-## Específico de Claude Code
+## Claude Code specific
 
-La doctrina general (cuándo lanzar subagentes, cuándo invocar cada skill, tiers de modelo) vive en
-[AGENTS.md](AGENTS.md) y se importa arriba con `@AGENTS.md`. Aquí solo va lo que no aplica a otros harnesses:
+The general doctrine (when to launch subagents, when to invoke each skill, model tiers) lives in
+[AGENTS.md](AGENTS.md) and is imported above with `@AGENTS.md`. Only what doesn't apply to other harnesses goes here:
 
-- **Mapeo de tiers a modelos**: rápido → `haiku`, estándar → `sonnet` (por defecto), razonamiento alto → `opus`.
-- Las skills se invocan también como slash command (`/ponytail lite|full|ultra`, `/grilling`, `/tdd`...).
-- Los subagentes propios del proyecto van en `.claude/agents/` (ver [.claude/agents/README.md](.claude/agents/README.md)).
+- **Tier to model mapping**: fast → `haiku`, standard → `sonnet` (default), high reasoning → `opus`.
+- Skills can also be invoked as slash commands (`/ponytail lite|full|ultra`, `/grilling`, `/tdd`...).
+- Project-specific subagents go in `.claude/agents/` (see [.claude/agents/README.md](.claude/agents/README.md)).
