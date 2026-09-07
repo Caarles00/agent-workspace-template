@@ -45,6 +45,7 @@ All language/framework agnostic:
 | `codebase-design` / `improve-codebase-architecture` | "Deep modules" vocabulary, spots opportunities to simplify the design |
 | `domain-modeling` | Pin down domain terminology (ubiquitous language) |
 | `api-design-principles` | REST/GraphQL design principles |
+| `frontend-design` | Aesthetic direction when building new UI: typography, palette, layout, avoiding the generic "AI look" |
 | `web-design-guidelines` | Frontend accessibility/UX review |
 | `obsidian-markdown` | Obsidian syntax for the documentation in `docs/` |
 
@@ -82,5 +83,6 @@ each with its own license:
 | [obra/superpowers](https://github.com/obra/superpowers) | `requesting-code-review` |
 | [getsentry/skills](https://github.com/getsentry/skills) | `security-review` (includes material from the [OWASP Cheat Sheet Series](https://cheatsheetseries.owasp.org/), CC BY-SA 4.0, see its `LICENSE`) |
 | [wshobson/agents](https://github.com/wshobson/agents) | `api-design-principles` |
+| [anthropics/skills](https://github.com/anthropics/skills) | `frontend-design` (Apache 2.0, see its `LICENSE.txt`) |
 | [vercel-labs/agent-skills](https://github.com/vercel-labs/agent-skills) | `web-design-guidelines` |
 | [kepano/obsidian-skills](https://github.com/kepano/obsidian-skills) | `obsidian-markdown` |
