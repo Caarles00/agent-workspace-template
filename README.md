@@ -77,6 +77,8 @@ All language/framework agnostic:
   `scripts/install.sh --check` verifies them without changing anything. Run both after `npx skills add`
   (on Windows the CLI creates absolute links) and before committing: if git has `core.symlinks=false`
   a new link is stored as a plain file, and `--check` prints the `git update-index` line that fixes it.
+  CI runs `--check` on every pull request too, because in a mixed team the person adding a skill often
+  doesn't use the harness whose link they just broke and has no reason to notice.
   On Windows without Developer Mode git materializes symlinks as text files; there, use
   `scripts/install.sh --copy`, which copies instead of linking (and assumes you will update the copies by hand).
   Those copies sit on paths git tracks as symlinks, so it reports them as deleted from then on: tell git to
