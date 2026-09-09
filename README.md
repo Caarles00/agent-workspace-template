@@ -3,10 +3,9 @@
 [![Stars](https://img.shields.io/github/stars/Caarles00/agent-workspace-template?style=flat&color=yellow)](https://github.com/Caarles00/agent-workspace-template/stargazers)
 [![License](https://img.shields.io/badge/license-MIT-green?style=flat)](LICENSE)
 
-Base template for starting a new project with coding agents already configured: generic
-skills, agent/subagent conventions, and reference documents on good practices (security,
-testing), all agnostic of language, framework and harness (Claude Code, Codex, Cursor,
-OpenCode...).
+Stop reconfiguring your agents on every new project. This template ships pre-wired skills,
+subagent conventions and security/testing references, agnostic of language, framework and
+harness — it works with Claude Code, Cursor, Codex and OpenCode.
 
 ## Usage
 
@@ -25,13 +24,12 @@ cd project-name
 rm -rf .git && git init   # drop the template's history
 ```
 
-Then wire the skills, which depends on your harness rather than your OS:
+Then wire the skills — this depends on your harness, not your OS:
 
 - **Codex, OpenCode and the rest of the [skills.sh](https://skills.sh) crowd**: nothing to do, they read
   `.agents/skills/` directly.
-- **Claude Code, Cursor**: `sh scripts/install.sh`. On Windows run it from Git Bash and with `--copy`
-  instead, because without Developer Mode git materializes the symlinks as plain text files (see
-  [How skills are organized](#how-skills-are-organized)).
+- **Claude Code, Cursor**: `sh scripts/install.sh`. On Windows without Developer Mode, read
+  [the note below](#windows-without-developer-mode) first.
 
 Then, in order:
 
@@ -63,7 +61,15 @@ All language/framework agnostic:
 | `find-skills` | Searches the [skills.sh](https://skills.sh) ecosystem when the installed set doesn't cover something |
 | `writing-skills` | Writes and edits skills the way `tdd` writes code: watch it fail first, then document |
 
+## What it does NOT include (on purpose)
+
+Concrete agents (`backend-feature`, `frontend-template`, `testing`...) and skills tied to a
+stack (backend framework, animation library, cloud provider) — they are recreated or added
+per project, because copying them without adapting to the real stack adds nothing.
+
 ## How skills are organized
+
+Reference for whoever maintains the skills. You don't need it to use the template.
 
 - **Canonical source**: `.agents/skills/<skill>/`. This is the folder shared by Codex, Cursor, OpenCode
   and the other harnesses that follow the [skills.sh](https://skills.sh) convention. Edit only here — under
@@ -79,20 +85,6 @@ All language/framework agnostic:
   a new link is stored as a plain file, and `--check` prints the `git update-index` line that fixes it.
   CI runs `--check` on every pull request too, because in a mixed team the person adding a skill often
   doesn't use the harness whose link they just broke and has no reason to notice.
-  On Windows without Developer Mode git materializes symlinks as text files; there, use
-  `scripts/install.sh --copy`, which copies instead of linking (and assumes you will update the copies by hand).
-  Those copies sit on paths git tracks as symlinks, so it reports them as deleted from then on: tell git to
-  ignore the difference, or a stray `git add -A` will drop the links and break the repo for everyone on
-  Mac/Linux. `--copy` users should run it once, right after the copy:
-
-  ```bash
-  git update-index --skip-worktree $(git ls-files .claude/skills .cursor/skills)   # --no-skip-worktree to undo
-  ```
-
-  That line only bites when the links are already tracked, which is the `--template` route. After
-  `rm -rf .git && git init` nothing is tracked yet, so it is a silent no-op and the copies simply become
-  your project's own content — fine, unless the team is mixed Windows/Unix, where the canon stops
-  propagating to whoever gets the copies.
 - **Adding and updating external skills**: `npx skills add <owner>/<repo> --skill <name>` installs into the
   canon, creates the symlinks and records origin and hash in `skills-lock.json` (the `find-skills` skill
   covers the search step). All included skills came in that way, so `npx skills update` brings them up to
@@ -108,11 +100,23 @@ All language/framework agnostic:
   `disable-model-invocation` frontmatter field is read by Claude Code (forces manual invocation). Other
   harnesses ignore what they don't know, so they coexist without issues.
 
-## What it does NOT include (on purpose)
+### Windows without Developer Mode
 
-Concrete agents (`backend-feature`, `frontend-template`, `testing`...) and skills tied to a
-stack (backend framework, animation library, cloud provider) — they are recreated or added
-per project, because copying them without adapting to the real stack adds nothing.
+Without Developer Mode git materializes symlinks as text files, so `scripts/install.sh` cannot link.
+Run it from Git Bash with `--copy`, which copies each skill instead of linking it (and assumes you will
+update the copies by hand). Those copies sit on paths git tracks as symlinks, so it reports them as
+deleted from then on: tell git to ignore the difference, or a stray `git add -A` will replace the links
+with full copies for everyone on Mac/Linux — CI catches that, but better not to get there. Run this
+once, right after the copy:
+
+```bash
+git update-index --skip-worktree $(git ls-files .claude/skills .cursor/skills)   # --no-skip-worktree to undo
+```
+
+That line only bites when the links are already tracked, which is the `--template` route. After
+`rm -rf .git && git init` nothing is tracked yet, so it is a silent no-op and the copies simply become
+your project's own content — fine, unless the team is mixed Windows/Unix, where the canon stops
+propagating to whoever gets the copies.
 
 ## License and third-party content
 
