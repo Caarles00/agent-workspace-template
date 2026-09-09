@@ -1,0 +1,2 @@
+# scripts/install.sh runs under dash in CI; a CRLF copy fails at `set -eu` before doing anything
+*.sh text eol=lf

@@ -1,0 +1,15 @@
+# Whoever adds a skill can break the wiring of a harness they don't use without noticing: nothing in
+# their own workflow reads that folder. This runs the same check the README asks for before committing.
+name: skills
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+jobs:
+  links:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: sh scripts/install.sh --check
