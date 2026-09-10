@@ -34,10 +34,10 @@ Then wire the skills — this depends on your harness, not your OS:
 Then, in order:
 
 1. Fill in [CLAUDE.md](CLAUDE.md) with the real stack (backend, frontend, package manager, code conventions, library quirks) and the documentation language (English by default). The doctrine shared across harnesses (subagents, skills, model tiers) lives in [AGENTS.md](AGENTS.md); CLAUDE.md imports it with `@AGENTS.md`.
-2. Run `setup-matt-pocock-skills` once (as a slash command in Claude Code; each harness exposes skills its own way). It asks where issues live for this project — GitHub, GitLab, local markdown or your own workflow — and writes `docs/agents/issue-tracker.md`, which `code-review` reads to find the spec a change was meant to implement. It also appends a short `## Agent skills` pointer block to CLAUDE.md, because that file exists; move it into [AGENTS.md](AGENTS.md) so every harness sees it, not only Claude Code.
+2. Run `setup-matt-pocock-skills` once (as a slash command in Claude Code; each harness exposes skills its own way). It asks where issues live for this project — GitHub, GitLab, local markdown or your own workflow — and writes `docs/agents/issue-tracker.md`, which `code-review` reads to find the spec a change was meant to implement. It also appends a short `## Agent skills` pointer block to CLAUDE.md, because that file exists; move it into [AGENTS.md](AGENTS.md) so every harness sees it. The block is informational — the skills read `docs/agents/` directly — so forgetting to move it breaks nothing.
 3. Adjust [SECURITY.md](SECURITY.md) and [TESTING.md](TESTING.md) if the stack has its own checklist (e.g. dependency audit tools, a specific test framework).
 4. Once the project has recurring task patterns (backend features, frontend views, tests), create agents in `.claude/agents/` following [.claude/agents/README.md](.claude/agents/README.md) and add them to the table in [AGENTS.md](AGENTS.md).
-5. Add stack-specific skills if applicable (backend framework, UI/animation library, data provider such as Supabase, etc.) — they are not included because they depend on the project.
+5. Add stack-specific skills if applicable (backend framework, UI/animation library, data provider such as Supabase, etc.) — they are not included because they depend on the project. And remove the ones the project will never use — a backend-only service has no use for `frontend-design` or `web-design-guidelines` — with `npx skills remove <name>` (or `git rm -r` the skill and its link, drop its entry from `skills-lock.json`, and run `sh scripts/install.sh --check`). Each unused skill is one more description in every session's context.
 
 ### Adding it to a project that already exists
 
@@ -110,7 +110,11 @@ Reference for whoever maintains the skills. You don't need it to use the templat
 - **Adding and updating external skills**: `npx skills add <owner>/<repo> --skill <name>` installs into the
   canon, creates the symlinks and records origin and hash in `skills-lock.json` (the `find-skills` skill
   covers the search step). All included skills came in that way, so `npx skills update` brings them up to
-  date and warns if they were edited locally.
+  date — but it does **not** warn about local edits: it overwrites every edited skill with upstream, deletes
+  files upstream doesn't have, and on Windows rewrites the links as absolute. Run it on a branch, then
+  `sh scripts/install.sh --check` and `sh scripts/check-rewrites.sh`: the second names each rewrite the
+  update undid so you can re-apply it. CI runs both on every pull request, so an update that reverts a
+  rewrite cannot merge quietly.
 - **Four vendored skills are edited on purpose**: `writing-plans` and `executing-plans` arrive with
   cross-references to sibling skills this template doesn't vendor and a `docs/superpowers/plans/` path
   convention; `find-skills` stops one command short of this repo's install flow; `web-design-guidelines`
@@ -118,9 +122,10 @@ Reference for whoever maintains the skills. You don't need it to use the templat
   Those are rewritten in place — cross-references normalized to the house form
   `call the Skill tool with "<name>"`, the path to `docs/plans/`, the `scripts/install.sh` step added, the
   rules vendored under `references/` and read locally — so the "edited locally" warning is expected for
-  exactly those four, not a problem to undo. Treat an update as a merge, not an overwrite: read the
-  incoming diff and re-apply the rewrites. If a skill's upstream version drifts far enough that the
-  rewrite no longer fits, drop the skill rather than maintaining a fork of it here.
+  exactly those four, not a problem to undo. `scripts/check-rewrites.sh` is the list of those rewrites as
+  a check; keep the two in sync. Treat an update as a merge, not an overwrite: read the incoming diff and
+  re-apply what the check names. If a skill's upstream version drifts far enough that the rewrite no
+  longer fits, drop the skill rather than maintaining a fork of it here.
 - **Per-harness metadata inside a skill**: `agents/openai.yaml` is read by Codex; the
   `disable-model-invocation` frontmatter field is read by Claude Code (forces manual invocation). Other
   harnesses ignore what they don't know, so they coexist without issues.
@@ -128,20 +133,26 @@ Reference for whoever maintains the skills. You don't need it to use the templat
 ### Windows without Developer Mode
 
 Without Developer Mode git materializes symlinks as text files, so `scripts/install.sh` cannot link.
-Run it from Git Bash with `--copy`, which copies each skill instead of linking it (and assumes you will
-update the copies by hand). Those copies sit on paths git tracks as symlinks, so it reports them as
-deleted from then on: tell git to ignore the difference, or a stray `git add -A` will replace the links
-with full copies for everyone on Mac/Linux — CI catches that, but better not to get there. Run this
-once, right after the copy:
+Run it from Git Bash with `--copy`, which replaces each link on disk with a copy of the skill (and assumes
+you will update the copies by hand). Two things keep those copies out of the repo, and you need both:
+the `.gitignore` shipped here ignores `.claude/skills/*/` — directories only, so it hides the copied
+contents and does nothing to real symlinks — and this line, run once after the copy, makes git stop
+seeing the link-turned-directory, which would otherwise be staged as a deleted link:
 
 ```bash
 git update-index --skip-worktree $(git ls-files .claude/skills .cursor/skills)   # --no-skip-worktree to undo
 ```
 
-That line only bites when the links are already tracked, which is the `--template` route. After
-`rm -rf .git && git init` nothing is tracked yet, so it is a silent no-op and the copies simply become
-your project's own content — fine, unless the team is mixed Windows/Unix, where the canon stops
-propagating to whoever gets the copies.
+With both in place, `git add -A` and `git commit -a` touch nothing under the skills folders.
+
+That line needs the links to be tracked already, which they are on the `--template` route. After
+`rm -rf .git && git init` nothing is tracked yet, so commit the links before copying: `sh scripts/install.sh`,
+`git add -A`, apply the `git update-index` lines that `sh scripts/install.sh --check` prints, commit — and
+only then `--copy` plus the `--skip-worktree` line above.
+
+Either way `--check` fails, with the command that repairs it, on the two states that break the repo for
+everyone else: a copy committed as a directory, and a copy with no link left in the index. CI runs the
+same check on every pull request.
 
 ## License and third-party content
 
