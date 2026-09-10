@@ -10,7 +10,8 @@ an Obsidian vault if you want to navigate the wikilinks.
 
 ## Suggested subfolder convention
 
-- `architecture/` — design decisions, ADRs
+- `agents/` — written once by `setup-matt-pocock-skills`: where issues live and how domain docs are laid out; `code-review` reads it
+- `adr/` — architecture decision records, where the vendored skills look for them (`improve-codebase-architecture`, `diagnosing-bugs`, `code-review`)
 - `features/` — one note per significant feature: what was done and why
 - `plans/` — implementation plans, one per feature, named `YYYY-MM-DD-<feature>.md` (see the `writing-plans` skill)
 - `runbooks/` — operational procedures (deployment, incidents, recurring tasks)

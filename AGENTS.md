@@ -36,7 +36,7 @@ Invoke it when you notice any of these signals:
 
 **Don't invoke:**
 - Security, auth or payment logic — ponytail doesn't simplify this
-- When you first need to understand the root cause of a bug — that's `systematic-debugging` below; come back to ponytail once a fix is actually on the table, because the fix still has to be the laziest one that works
+- When you first need to understand the root cause of a bug — that's `diagnosing-bugs` below; come back to ponytail once a fix is actually on the table, because the fix still has to be the laziest one that works
 
 Levels: `lite` (suggests an alternative), `full` (default), `ultra` (YAGNI extremist). Each harness exposes the skill its own way (slash command, mention by name...); the level is given when invoking it.
 
@@ -71,13 +71,15 @@ Once the design is agreed, write it down before touching code with the `writing-
 
 Plans are project documentation like any other: `docs/plans/`, in the language set in CLAUDE.md, Obsidian conventions (see the `obsidian-markdown` skill).
 
-### `systematic-debugging` — when something breaks and you don't yet know why
+### `diagnosing-bugs` — when something breaks and you don't yet know why
 
 Invoke it when you notice any of these signals:
 
 **Do invoke:**
 - A test fails, an endpoint 500s, or the behavior doesn't match what the code plainly says it should do
 - You are about to propose a fix and you cannot state the root cause in one sentence
+- You are under time pressure and a quick fix looks obvious — that is exactly when guessing is most tempting, and a tight loop is faster than thrashing
+- You are reading code to build a theory before you have a command that goes red on this bug
 - Your first fix didn't work and you are already reaching for a second one
 - The bug shows up only sometimes, only for one user, or only in one environment
 - You catch yourself adding a `try/except`, a null check or a retry whose real job is to make a symptom disappear
@@ -86,7 +88,7 @@ Invoke it when you notice any of these signals:
 - The cause is already proven — a typo, a wrong import, a stack trace that names the file and the line
 - Nothing is broken and you are chasing a design improvement instead: that's `codebase-design` / `improve-codebase-architecture`
 
-The fix lands test-first, as [TESTING.md](TESTING.md) requires: reproduce the bug in a failing test, then fix it, so it stays as a regression test.
+The skill's first phase is the whole skill: a tight feedback loop that goes red on *this* bug, before any hypothesis. The fix then lands test-first, as [TESTING.md](TESTING.md) requires, so the minimised repro stays as the regression test. One rule the skill doesn't state, so it lives here: if the third fix in a row fails, stop. That isn't a failed hypothesis, it's a wrong design — take it to `codebase-design` / `improve-codebase-architecture` before attempting a fourth.
 
 ### `verification-before-completion` — before saying "done"
 
@@ -102,25 +104,23 @@ Invoke it when you notice any of these signals:
 **Don't invoke:**
 - There is nothing to verify yet — you are still mid-edit, or still exploring
 
-This is the gate *before* the reviews below, not a cheaper version of them: it proves your own claims with fresh command output, while `requesting-code-review` puts someone else's eyes on the work. And unlike the reviews, it has no size threshold — a one-line CSS change still gets the command run and the output read before you call it done.
+This is the gate *before* the reviews below, not a cheaper version of them: it proves your own claims with fresh command output, while `code-review` puts someone else's eyes on the work. And unlike the reviews, it has no size threshold — a one-line CSS change still gets the command run and the output read before you call it done.
 
-### `requesting-code-review` + `security-review` — the second pair of eyes when completing a feature
+### `code-review` + `security-review` — the second pair of eyes when completing a feature
 
-When you finish implementing a new feature, a new endpoint, or any significant business logic change, launch a **code review** with the `requesting-code-review` skill before calling the task done: it verifies the work meets the requirements and the project's conventions.
+When you finish implementing a new feature, a new endpoint, or any significant business logic change, launch a **code review** with the `code-review` skill before calling the task done. It reviews on two axes in two parallel subagents — the project's documented conventions, and the spec or issue the change was meant to implement — and reports them separately so one can't mask the other. It finds the spec through the issue tracker (`docs/agents/issue-tracker.md`, written once by `setup-matt-pocock-skills`) or through a file under `docs/` named after the feature — so the plan `writing-plans` saved to `docs/plans/` is the spec the review reads. Name it after the branch or feature and there is nothing else to produce.
 
 Add a **security review** with the `security-review` skill (OWASP Top 10, injection, auth, XSS, etc.) only when the change touches the sensitive surface listed in [SECURITY.md](SECURITY.md): auth/sessions/permissions, payments, user-uploaded files, calls to external services with user data, or any new endpoint or entry point. When both apply, launch them **in parallel** as two scoped agents.
 
 **Don't invoke** (neither of them) for: trivial one-line bugfixes, CSS/style changes, documentation updates or unit tests without new logic. Those are exceptions to the *reviews* only — `verification-before-completion` above still applies, and has no exceptions.
 
-### `find-skills` + `writing-skills` — when the toolkit itself is the gap
+### `find-skills` — when the toolkit itself is the gap
 
-These two act on `.agents/skills/`, not on the project's code.
+This one acts on `.agents/skills/`, not on the project's code.
 
 **Do invoke:**
 - You are about to improvise an entire methodology — a testing approach, a migration procedure, a design language — that someone has almost certainly already packaged: `find-skills` searches the [skills.sh](https://skills.sh) ecosystem before you write it from scratch
 - The user asks "is there a skill for X?", or wants a capability the installed set plainly doesn't cover
-- The same correction has come back three times, or the user says "from now on, always do it this way" — that's a skill, not a memory, and `writing-skills` is how it becomes one
-- You are editing a skill that already lives in `.agents/skills/` and want the change to survive contact with a real agent rather than just reading well
 
 **Don't invoke:**
 - A single project rule or a stack quirk — that goes in [CLAUDE.md](CLAUDE.md), not into a new skill

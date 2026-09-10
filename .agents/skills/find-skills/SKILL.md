@@ -114,7 +114,8 @@ Then finish the job, or the skill is only half-added:
    `AGENTS.md` with **Do invoke** / **Don't invoke** signals. If it is reference material rather than a
    trigger, leave `AGENTS.md` alone.
 3. Read the whole skill directory, not just `SKILL.md`, and rewrite any cross-reference to a skill this
-   project does not vendor — call the Skill tool with "writing-skills" for the house conventions.
+   project does not vendor to the house form `call the Skill tool with "<name>"` — see "How skills are
+   organized" in the project's README.
 
 ## Common Skill Categories
 
@@ -142,8 +143,8 @@ If no relevant skills exist:
 
 1. Acknowledge that no existing skill was found
 2. Offer to help with the task directly using your general capabilities
-3. If it is something the project does often, offer to write one: call the Skill tool with
-   "writing-skills", which covers authoring it into `.agents/skills/` the way this repo expects
+3. If it is something the project does often, offer to write one under `.agents/skills/` — a
+   `SKILL.md` with `name` and `description` frontmatter is all a skill needs to start
 
 Example:
 
@@ -152,5 +153,5 @@ I searched for skills related to "xyz" but didn't find any matches.
 I can still help you with this task directly! Would you like me to proceed?
 
 If this is something you do often, we can write our own instead — say the word and I'll
-use the writing-skills skill to add it under .agents/skills/.
+add it under .agents/skills/.
 ```

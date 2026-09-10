@@ -34,7 +34,7 @@ For each task:
 
 After all tasks complete and verified:
 - **REQUIRED SUB-SKILL:** call the Skill tool with "verification-before-completion" — run the suite now and read the output; do not report the plan done from memory
-- Then call the Skill tool with "requesting-code-review", plus "security-review" if the change touched the sensitive surface listed in the project's SECURITY.md
+- Then call the Skill tool with "code-review", plus "security-review" if the change touched the sensitive surface listed in the project's SECURITY.md
 
 ## When to Stop and Ask for Help
 

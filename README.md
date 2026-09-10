@@ -34,9 +34,10 @@ Then wire the skills — this depends on your harness, not your OS:
 Then, in order:
 
 1. Fill in [CLAUDE.md](CLAUDE.md) with the real stack (backend, frontend, package manager, code conventions, library quirks) and the documentation language (English by default). The doctrine shared across harnesses (subagents, skills, model tiers) lives in [AGENTS.md](AGENTS.md); CLAUDE.md imports it with `@AGENTS.md`.
-2. Adjust [SECURITY.md](SECURITY.md) and [TESTING.md](TESTING.md) if the stack has its own checklist (e.g. dependency audit tools, a specific test framework).
-3. Once the project has recurring task patterns (backend features, frontend views, tests), create agents in `.claude/agents/` following [.claude/agents/README.md](.claude/agents/README.md) and add them to the table in [AGENTS.md](AGENTS.md).
-4. Add stack-specific skills if applicable (backend framework, UI/animation library, data provider such as Supabase, etc.) — they are not included because they depend on the project.
+2. Run `setup-matt-pocock-skills` once (as a slash command in Claude Code; each harness exposes skills its own way). It asks where issues live for this project — GitHub, GitLab, local markdown or your own workflow — and writes `docs/agents/issue-tracker.md`, which `code-review` reads to find the spec a change was meant to implement. It also appends a short `## Agent skills` pointer block to CLAUDE.md, because that file exists; move it into [AGENTS.md](AGENTS.md) so every harness sees it, not only Claude Code.
+3. Adjust [SECURITY.md](SECURITY.md) and [TESTING.md](TESTING.md) if the stack has its own checklist (e.g. dependency audit tools, a specific test framework).
+4. Once the project has recurring task patterns (backend features, frontend views, tests), create agents in `.claude/agents/` following [.claude/agents/README.md](.claude/agents/README.md) and add them to the table in [AGENTS.md](AGENTS.md).
+5. Add stack-specific skills if applicable (backend framework, UI/animation library, data provider such as Supabase, etc.) — they are not included because they depend on the project.
 
 ### Adding it to a project that already exists
 
@@ -70,9 +71,9 @@ All language/framework agnostic:
 | `grilling` | Interrogates the plan before building, detects unresolved edge cases |
 | `writing-plans` / `executing-plans` | Turns a settled design into a task-by-task plan in `docs/plans/`, then executes it with checkpoints |
 | `tdd` | Guides the red→green loop: what a good test is, where tests go (seams), anti-patterns (implementation-coupled tests, tautological tests, "horizontal slicing") |
-| `systematic-debugging` | Four phases to the root cause before any fix — no patching symptoms |
+| `diagnosing-bugs` | A feedback loop that goes red on the bug before any hypothesis; then minimise, rank hypotheses, fix test-first |
 | `verification-before-completion` | Gate before saying "done": run the command, read the output, then claim it |
-| `requesting-code-review` | Review checklist when closing a feature |
+| `code-review` | Two-axis review when closing a feature — the repo's conventions and the originating spec, in parallel subagents |
 | `security-review` | OWASP Top 10 style security review |
 | `codebase-design` / `improve-codebase-architecture` | "Deep modules" vocabulary, spots opportunities to simplify the design |
 | `domain-modeling` | Pin down domain terminology (ubiquitous language) |
@@ -81,7 +82,7 @@ All language/framework agnostic:
 | `web-design-guidelines` | Frontend accessibility/UX review |
 | `obsidian-markdown` | Obsidian syntax for the documentation in `docs/` |
 | `find-skills` | Searches the [skills.sh](https://skills.sh) ecosystem when the installed set doesn't cover something |
-| `writing-skills` | Writes and edits skills the way `tdd` writes code: watch it fail first, then document |
+| `setup-matt-pocock-skills` | Run once per project: records where issues live in `docs/agents/`, which `code-review` reads to find the spec |
 
 ## What it does NOT include (on purpose)
 
@@ -111,11 +112,12 @@ Reference for whoever maintains the skills. You don't need it to use the templat
   canon, creates the symlinks and records origin and hash in `skills-lock.json` (the `find-skills` skill
   covers the search step). All included skills came in that way, so `npx skills update` brings them up to
   date and warns if they were edited locally.
-- **Some vendored skills are edited on purpose**: several arrive with cross-references to skills this
-  template doesn't vendor, or with path conventions that don't match this repo's `docs/`. Those are
-  rewritten in place — cross-references normalized to the house form `call the Skill tool with "<name>"`,
-  upstream's `docs/superpowers/plans/` rewritten to `docs/plans/` — so the "edited locally" warning is
-  expected for them, not a problem to undo. Treat an update as a merge, not an overwrite: read the
+- **Three vendored skills are edited on purpose**: `writing-plans` and `executing-plans` arrive with
+  cross-references to sibling skills this template doesn't vendor and a `docs/superpowers/plans/` path
+  convention; `find-skills` stops one command short of this repo's install flow. Those are rewritten in
+  place — cross-references normalized to the house form `call the Skill tool with "<name>"`, the path to
+  `docs/plans/`, the `scripts/install.sh` step added — so the "edited locally" warning is expected for
+  exactly those three, not a problem to undo. Treat an update as a merge, not an overwrite: read the
   incoming diff and re-apply the rewrites. If a skill's upstream version drifts far enough that the
   rewrite no longer fits, drop the skill rather than maintaining a fork of it here.
 - **Per-harness metadata inside a skill**: `agents/openai.yaml` is read by Codex; the
@@ -147,9 +149,9 @@ each with its own license:
 
 | Origin | Skills |
 |---|---|
-| [mattpocock/skills](https://github.com/mattpocock/skills) | `tdd`, `grilling`, `codebase-design`, `improve-codebase-architecture`, `domain-modeling` |
+| [mattpocock/skills](https://github.com/mattpocock/skills) | `tdd`, `grilling`, `codebase-design`, `improve-codebase-architecture`, `domain-modeling`, `diagnosing-bugs`, `code-review`, `setup-matt-pocock-skills` |
 | [dietrichgebert/ponytail](https://github.com/dietrichgebert/ponytail) | `ponytail` |
-| [obra/superpowers](https://github.com/obra/superpowers) | `requesting-code-review`, `systematic-debugging`, `verification-before-completion`, `writing-plans`, `executing-plans`, `writing-skills` |
+| [obra/superpowers](https://github.com/obra/superpowers) | `verification-before-completion`, `writing-plans`, `executing-plans` |
 | [getsentry/skills](https://github.com/getsentry/skills) | `security-review` (includes material from the [OWASP Cheat Sheet Series](https://cheatsheetseries.owasp.org/), CC BY-SA 4.0, see its `LICENSE`) |
 | [wshobson/agents](https://github.com/wshobson/agents) | `api-design-principles` |
 | [anthropics/skills](https://github.com/anthropics/skills) | `frontend-design` (Apache 2.0, see its `LICENSE.txt`) |
