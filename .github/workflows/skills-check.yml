@@ -13,3 +13,4 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: sh scripts/install.sh --check
+      - run: sh scripts/check-rewrites.sh

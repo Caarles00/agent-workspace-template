@@ -1,3 +1,7 @@
 .claude/settings.local.json
 .env
 .env.local
+
+# --copy users: keeps copied skill contents out of `git add -A`; inert for symlinks (README, Windows note)
+.claude/skills/*/
+.cursor/skills/*/

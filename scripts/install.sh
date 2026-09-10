@@ -47,7 +47,9 @@ for skill in .agents/skills/*/; do
         elif [ -d "$dest" ]; then
           # copied skill (--copy): fine on disk, but the index is what gets pushed and must still hold the link
           mode=$(git ls-files -s -- "$dest" 2>/dev/null | head -n 1 | cut -d' ' -f1)
-          if [ -n "$mode" ] && [ "$mode" != 120000 ]; then
+          if [ -z "$mode" ] && git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+            fail "$dest" "copied skill with no link in the index, so whoever clones gets nothing here; add it with: git update-index --add --cacheinfo 120000,\$(printf '%s' '$want' | git hash-object -w --stdin),$dest"
+          elif [ -n "$mode" ] && [ "$mode" != 120000 ]; then
             fail "$dest" "copied skill committed as a directory; restore the link with: git rm -r -q --cached $dest && git update-index --add --cacheinfo 120000,\$(printf '%s' '$want' | git hash-object -w --stdin),$dest"
           fi
         elif [ -f "$dest" ]; then
