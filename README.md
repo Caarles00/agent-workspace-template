@@ -38,6 +38,28 @@ Then, in order:
 3. Once the project has recurring task patterns (backend features, frontend views, tests), create agents in `.claude/agents/` following [.claude/agents/README.md](.claude/agents/README.md) and add them to the table in [AGENTS.md](AGENTS.md).
 4. Add stack-specific skills if applicable (backend framework, UI/animation library, data provider such as Supabase, etc.) — they are not included because they depend on the project.
 
+### Adding it to a project that already exists
+
+Git can check out specific paths from another repository straight into your index, so nothing is
+copied by hand and nothing of yours is touched:
+
+```bash
+git remote add template https://github.com/Caarles00/agent-workspace-template.git
+git fetch template master
+git checkout template/master -- .agents .claude scripts skills-lock.json \
+    AGENTS.md CLAUDE.md SECURITY.md TESTING.md .github/workflows/skills-check.yml
+sh scripts/install.sh --check
+```
+
+Three files are left out on purpose because your project probably has its own: add
+`.claude/settings.local.json` to `.gitignore`, `*.sh text eol=lf` to `.gitattributes`, and take
+`docs/README.md` only if you want its Obsidian conventions. If you already have a `CLAUDE.md` or
+`AGENTS.md`, drop it from the list and merge by hand. Then continue from *wire the skills* above.
+
+Keeping `template` as a remote is also how you update later: `git fetch template && git checkout
+template/master -- .agents/skills/tdd` brings that one skill and nothing else — a path the template
+button doesn't have, since it drops the history.
+
 ## What `.agents/skills/` includes
 
 All language/framework agnostic:
