@@ -28,6 +28,7 @@
 - All frontend must be responsive
 - _(interactivity preference: HTMX, SPA framework, vanilla JS... and when to use each)_
 - Always preserve template syntax and existing logic when modifying templates
+- New UI, or reshaping existing UI, starts with the `frontend-design` skill; a review of UI for accessibility and interaction rules goes through `web-design-guidelines`
 
 ## Claude Code specific
 

@@ -9,31 +9,32 @@ metadata:
 
 # Web Interface Guidelines
 
-Review files for compliance with Web Interface Guidelines.
+Review files for compliance with Vercel's Web Interface Guidelines.
 
 ## How It Works
 
-1. Fetch the latest guidelines from the source URL below
+1. Read the rules in `references/guidelines.md`, next to this file
 2. Read the specified files (or prompt user for files/pattern)
-3. Check against all rules in the fetched guidelines
-4. Output findings in the terse `file:line` format
+3. Check against all rules in the guidelines
+4. Output findings in the terse `file:line` format the guidelines specify
 
 ## Guidelines Source
 
-Fetch fresh guidelines before each review:
+The rules are vendored verbatim from
+`https://raw.githubusercontent.com/vercel-labs/web-interface-guidelines/main/command.md` (MIT, see
+`references/LICENSE`), so the review works offline, on any harness, and against text that has been read
+here. The file's own `$ARGUMENTS` placeholder means the files you were given. To pick up upstream
+changes, re-download it as the comment at its top describes.
 
-```
-https://raw.githubusercontent.com/vercel-labs/web-interface-guidelines/main/command.md
-```
-
-Use WebFetch to retrieve the latest rules. The fetched content contains all the rules and output format instructions.
+Most rules are plain HTML, CSS and accessibility and apply to any frontend; a few assume React or Next.js
+(`onKeyDown`, `<Link>`, hydration). Skip those where the stack makes them meaningless, and say so.
 
 ## Usage
 
 When a user provides a file or pattern argument:
-1. Fetch guidelines from the source URL above
+1. Read `references/guidelines.md`
 2. Read the specified files
-3. Apply all rules from the fetched guidelines
+3. Apply all rules from the guidelines
 4. Output findings using the format specified in the guidelines
 
 If no files specified, ask the user which files to review.

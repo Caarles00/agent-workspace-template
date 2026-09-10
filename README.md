@@ -77,7 +77,6 @@ All language/framework agnostic:
 | `security-review` | OWASP Top 10 style security review |
 | `codebase-design` / `improve-codebase-architecture` | "Deep modules" vocabulary, spots opportunities to simplify the design |
 | `domain-modeling` | Pin down domain terminology (ubiquitous language) |
-| `api-design-principles` | REST/GraphQL design principles |
 | `frontend-design` | Aesthetic direction when building new UI: typography, palette, layout, avoiding the generic "AI look" |
 | `web-design-guidelines` | Frontend accessibility/UX review |
 | `obsidian-markdown` | Obsidian syntax for the documentation in `docs/` |
@@ -112,12 +111,14 @@ Reference for whoever maintains the skills. You don't need it to use the templat
   canon, creates the symlinks and records origin and hash in `skills-lock.json` (the `find-skills` skill
   covers the search step). All included skills came in that way, so `npx skills update` brings them up to
   date and warns if they were edited locally.
-- **Three vendored skills are edited on purpose**: `writing-plans` and `executing-plans` arrive with
+- **Four vendored skills are edited on purpose**: `writing-plans` and `executing-plans` arrive with
   cross-references to sibling skills this template doesn't vendor and a `docs/superpowers/plans/` path
-  convention; `find-skills` stops one command short of this repo's install flow. Those are rewritten in
-  place — cross-references normalized to the house form `call the Skill tool with "<name>"`, the path to
-  `docs/plans/`, the `scripts/install.sh` step added — so the "edited locally" warning is expected for
-  exactly those three, not a problem to undo. Treat an update as a merge, not an overwrite: read the
+  convention; `find-skills` stops one command short of this repo's install flow; `web-design-guidelines`
+  fetches its rules from a URL at every run, which needs WebFetch and follows text nobody here has read.
+  Those are rewritten in place — cross-references normalized to the house form
+  `call the Skill tool with "<name>"`, the path to `docs/plans/`, the `scripts/install.sh` step added, the
+  rules vendored under `references/` and read locally — so the "edited locally" warning is expected for
+  exactly those four, not a problem to undo. Treat an update as a merge, not an overwrite: read the
   incoming diff and re-apply the rewrites. If a skill's upstream version drifts far enough that the
   rewrite no longer fits, drop the skill rather than maintaining a fork of it here.
 - **Per-harness metadata inside a skill**: `agents/openai.yaml` is read by Codex; the
@@ -153,8 +154,7 @@ each with its own license:
 | [dietrichgebert/ponytail](https://github.com/dietrichgebert/ponytail) | `ponytail` |
 | [obra/superpowers](https://github.com/obra/superpowers) | `verification-before-completion`, `writing-plans`, `executing-plans` |
 | [getsentry/skills](https://github.com/getsentry/skills) | `security-review` (includes material from the [OWASP Cheat Sheet Series](https://cheatsheetseries.owasp.org/), CC BY-SA 4.0, see its `LICENSE`) |
-| [wshobson/agents](https://github.com/wshobson/agents) | `api-design-principles` |
 | [anthropics/skills](https://github.com/anthropics/skills) | `frontend-design` (Apache 2.0, see its `LICENSE.txt`) |
-| [vercel-labs/agent-skills](https://github.com/vercel-labs/agent-skills) | `web-design-guidelines` |
+| [vercel-labs/agent-skills](https://github.com/vercel-labs/agent-skills) | `web-design-guidelines` (its rules are vendored from [vercel-labs/web-interface-guidelines](https://github.com/vercel-labs/web-interface-guidelines), MIT, see its `references/LICENSE`) |
 | [vercel-labs/skills](https://github.com/vercel-labs/skills) | `find-skills` (a different repo from `vercel-labs/agent-skills` above) |
 | [kepano/obsidian-skills](https://github.com/kepano/obsidian-skills) | `obsidian-markdown` |
