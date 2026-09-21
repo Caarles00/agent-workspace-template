@@ -33,7 +33,9 @@
 ## Claude Code specific
 
 The general doctrine (when to launch subagents, when to invoke each skill, model tiers) lives in
-[AGENTS.md](AGENTS.md) and is imported above with `@AGENTS.md`. Only what doesn't apply to other harnesses goes here:
+[AGENTS.md](AGENTS.md) and is imported above with `@AGENTS.md`. Keep the import: Claude Code reads `AGENTS.md`
+on its own only when no `CLAUDE.md` exists, so dropping that line silently drops the doctrine. Only what doesn't
+apply to other harnesses goes here:
 
 - **Tier to model mapping**: fast → `haiku`, standard → `sonnet` (default), high reasoning → `opus`.
 - Skills can also be invoked as slash commands (`/ponytail lite|full|ultra`, `/grilling`, `/writing-plans`, `/tdd`...).
