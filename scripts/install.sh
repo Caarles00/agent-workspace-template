@@ -23,6 +23,12 @@ TARGETS="
 
 FAILS=0
 fail() { echo "FAIL  $1: $2"; FAILS=$((FAILS + 1)); }
+# Text links keep the repo consistent but no harness can load them, so they pass --check and still need a warning
+TEXT=0
+# Without symlink support, relinking a --copy copy would replace a working skill with an unloadable text link
+CAN_LINK=no
+if ln -s README.md .install-link-probe 2>/dev/null && [ -L .install-link-probe ]; then CAN_LINK=yes; fi
+rm -rf .install-link-probe
 
 for skill in .agents/skills/*/; do
   name=$(basename "$skill")
@@ -54,7 +60,7 @@ for skill in .agents/skills/*/; do
           fi
         elif [ -f "$dest" ]; then
           # git materializes symlinks as plain text when core.symlinks=false
-          [ "$(cat "$dest")" = "$want" ] || fail "$dest" "plain file with unexpected content"
+          if [ "$(cat "$dest")" = "$want" ]; then TEXT=$((TEXT + 1)); else fail "$dest" "plain file with unexpected content"; fi
         else
           fail "$dest" "missing"
         fi
@@ -69,7 +75,8 @@ for skill in .agents/skills/*/; do
         mkdir -p "$dir"
         if [ -L "$dest" ] && [ "$(readlink "$dest")" = "$want" ] && [ -e "$dest" ]; then continue; fi
         # git materializes symlinks as plain text when core.symlinks=false; that is the tracked state, keep it
-        if [ -f "$dest" ] && [ ! -L "$dest" ] && [ "$(cat "$dest")" = "$want" ]; then continue; fi
+        if [ -f "$dest" ] && [ ! -L "$dest" ] && [ "$(cat "$dest")" = "$want" ]; then TEXT=$((TEXT + 1)); continue; fi
+        if [ -d "$dest" ] && [ ! -L "$dest" ] && [ "$CAN_LINK" = no ]; then continue; fi
         if [ -e "$dest" ] || [ -L "$dest" ]; then action=relink; else action=link; fi
         rm -rf "$dest"
         if ln -s "$want" "$dest" 2>/dev/null && [ -L "$dest" ]; then
@@ -79,7 +86,8 @@ for skill in .agents/skills/*/; do
           # core.symlinks=false, so the repo stays consistent. Claude Code won't follow it locally.
           rm -rf "$dest"
           printf '%s' "$want" > "$dest"
-          echo "$action  $dest  (as text: symlinks unavailable here; use --copy to have the skill locally)"
+          TEXT=$((TEXT + 1))
+          echo "$action  $dest  (as text: symlinks unavailable here)"
         fi
         ;;
       copy)
@@ -93,8 +101,13 @@ for skill in .agents/skills/*/; do
   done
 done
 
+if [ "$TEXT" -gt 0 ]; then
+  echo "WARN  $TEXT skill(s) are text links: fine for git, but no harness can load them on this machine."
+  echo "      Run 'sh scripts/install.sh --copy' (README: Windows without Developer Mode)"
+fi
+
 if [ "$MODE" = check ]; then
-  if [ "$(git config core.symlinks 2>/dev/null || true)" = false ]; then
+  if [ "$FAILS" -gt 0 ] && [ "$(git config core.symlinks 2>/dev/null || true)" = false ]; then
     echo "NOTE  core.symlinks=false: git stores new links as plain files; register them with the update-index line above"
   fi
   if [ "$FAILS" -eq 0 ]; then
