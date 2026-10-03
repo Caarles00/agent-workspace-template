@@ -17,6 +17,7 @@ for the template. Fill in this table as soon as you create the first one._
 - **Massive fan-out (workflows / dozens of agents) only on explicit request.** Don't trigger it on your own initiative.
 - Keep the established pattern when closing a feature: verify first — that one you do yourself, it's commands and their output, not a subagent — then a code review, plus a security review when the change touches sensitive surface (see "Skills for specific moments" below). Relaying a subagent's "all green" as if you had checked it is exactly the failure `verification-before-completion` exists to stop.
 - Prune custom agents you don't use: each definition takes up context even when not launched.
+- **When nobody can answer.** Most skills here stop to ask the user (`grilling`, `executing-plans`, the seams in `tdd`, `setup-matt-pocock-skills`). A subagent or an unattended run has no one to ask: take the most conservative option, write each assumption under an `## Assumptions to confirm` heading in the spec or plan you are working from, and list them in your hand-back. An assumption buried in the code is a decision nobody made.
 
 ---
 
@@ -52,7 +53,7 @@ Invoke it when you notice any of these signals:
 **Don't invoke:**
 - Trivial one-line bugfixes, CSS/style changes, documentation updates or unit tests without new logic
 
-When the frontier empties and the user confirms the design, don't start typing: if the work spans more than a couple of files, the next step is `writing-plans` below. Grilling settles the decisions; the plan is where they stop living in your context window.
+When the frontier empties and the user confirms the design, don't start typing: write the decisions down as the spec, where `docs/agents/issue-tracker.md` says specs live (`.scratch/<feature-slug>/spec.md` with local markdown). Grilling itself leaves nothing on disk, and both `writing-plans` and `code-review` read that spec. Use the feature slug as the branch name too. Then, if the work spans more than a couple of files, the next step is `writing-plans` below: grilling settles the decisions, and the plan is where they stop living in your context window.
 
 ### `writing-plans` + `executing-plans` — from a settled design to a task list
 
@@ -108,9 +109,9 @@ This is the gate *before* the reviews below, not a cheaper version of them: it p
 
 ### `code-review` + `security-review` — the second pair of eyes when completing a feature
 
-When you finish implementing a new feature, a new endpoint, or any significant business logic change, launch a **code review** with the `code-review` skill before calling the task done. It reviews on two axes in two parallel subagents — the project's documented conventions, and the spec or issue the change was meant to implement — and reports them separately so one can't mask the other. It finds the spec through the issue tracker (`docs/agents/issue-tracker.md`, written once by `setup-matt-pocock-skills`) or through a file under `docs/` named after the feature — so the plan `writing-plans` saved to `docs/plans/` is the spec the review reads. Name it after the branch or feature and there is nothing else to produce.
+When you finish implementing a new feature, a new endpoint, or any significant business logic change, launch a **code review** with the `code-review` skill before calling the task done. It reviews on two axes in two parallel subagents — the project's documented conventions, and the spec or issue the change was meant to implement — and reports them separately so one can't mask the other. Pass it the spec, the path or issue in the plan's **Spec:** header, instead of leaving it to match files by branch name: that lookup can hit the plan, or a feature note the diff itself added, and reviewing against a doc the implementer wrote is circular. The plan is secondary input for the interfaces, not the spec. This template has no `CODING_STANDARDS.md`, so name the standards sources for the Standards axis yourself: [AGENTS.md](AGENTS.md), [CLAUDE.md](CLAUDE.md), [TESTING.md](TESTING.md) and [SECURITY.md](SECURITY.md).
 
-Add a **security review** with the `security-review` skill (OWASP Top 10, injection, auth, XSS, etc.) only when the change touches the sensitive surface listed in [SECURITY.md](SECURITY.md): auth/sessions/permissions, payments, user-uploaded files, calls to external services with user data, or any new endpoint or entry point. When both apply, launch them **in parallel** as two scoped agents.
+Add a **security review** with the `security-review` skill (OWASP Top 10, injection, auth, XSS, etc.) only when the change touches the sensitive surface listed in [SECURITY.md](SECURITY.md): auth/sessions/permissions, payments, user-uploaded files, calls to external services with user data, or any new endpoint or entry point. When both apply, launch them **in parallel** as two scoped agents. `code-review` spawns two sub-agents of its own, which many harnesses can't do from inside a subagent; there, launch its Standards and Spec axes and the security review as three sibling agents instead. All of them run on the high reasoning tier.
 
 **Don't invoke** (neither of them) for: trivial one-line bugfixes, CSS/style changes, documentation updates or unit tests without new logic. Those are exceptions to the *reviews* only — `verification-before-completion` above still applies, and has no exceptions.
 
