@@ -72,6 +72,17 @@ Once the design is agreed, write it down before touching code with the `writing-
 
 Plans are project documentation like any other: `docs/plans/`, in the language set in CLAUDE.md, Obsidian conventions (see the `obsidian-markdown` skill).
 
+### `domain-modeling` — when a term gets settled
+
+**Do invoke:**
+- Grilling settles what a domain word means (what counts as a "booking", when an "order" is "paid") and the code is about to name it
+- Two people, docs or modules use different words for the same thing, or one word for two things
+- A decision is hard to reverse and someone will later ask why: that is an ADR in `docs/adr/`
+
+**Don't invoke:**
+- To look a term up: reading `CONTEXT.md` is a habit, not this skill
+- Before there is a term to record: the skill creates `CONTEXT.md` and `docs/adr/` lazily, so don't scaffold them upfront
+
 ### `diagnosing-bugs` — when something breaks and you don't yet know why
 
 Invoke it when you notice any of these signals:
