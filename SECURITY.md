@@ -34,6 +34,10 @@ Run the `security-review` skill (see [AGENTS.md](AGENTS.md)) before calling the 
 
 Changes outside that surface get the regular code review only.
 
+The skill reports only high-confidence vulnerabilities, and drops defense-in-depth items as noise. A breach of
+this file's own checklist is never noise: report it under its own heading, whatever its confidence. Otherwise
+a missing rate limit or CSRF token vanishes from the review without anyone deciding to accept it.
+
 ## Reference
 
 - [OWASP Top 10](https://owasp.org/www-project-top-ten/) — general reference checklist

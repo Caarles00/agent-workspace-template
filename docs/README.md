@@ -16,5 +16,10 @@ an Obsidian vault if you want to navigate the wikilinks.
 - `plans/` — implementation plans, one per feature, named `YYYY-MM-DD-<feature>.md` (see the `writing-plans` skill)
 - `runbooks/` — operational procedures (deployment, incidents, recurring tasks)
 
-Adjust this structure to the project; the only fixed rule is that everything lives here,
+Specs are the one exception to "everything lives here": they go where `agents/issue-tracker.md` says,
+which with local markdown is `.scratch/<feature-slug>/spec.md` at the repo root. That path belongs to
+`setup-matt-pocock-skills` and `code-review` searches it, so it stays. Its templates also mention
+`/wayfinder` and triage labels, which come from skills this template doesn't vendor: ignore those sections.
+
+Adjust this structure to the project; the only fixed rule is that everything else lives here,
 in the configured language, and linked with wikilinks where it makes sense.
