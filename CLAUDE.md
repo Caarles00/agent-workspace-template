@@ -39,4 +39,5 @@ apply to other harnesses goes here:
 
 - **Tier to model mapping**: fast → `haiku`, standard → `sonnet` (default), high reasoning → `opus`.
 - Skills can also be invoked as slash commands (`/ponytail lite|full|ultra`, `/grilling`, `/writing-plans`, `/tdd`...).
+- Claude Code's built-in `code-review` and `security-review` shadow the project skills of the same name, so the Skill tool and `/code-review` load the built-ins, which follow a different method. Whenever this repo's docs say to invoke either one, read `.agents/skills/<name>/SKILL.md` and follow it instead.
 - Project-specific subagents go in `.claude/agents/` (see [.claude/agents/README.md](.claude/agents/README.md)).
