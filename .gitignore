@@ -1,3 +1,5 @@
+# Template entries only. Add your stack's ignores (virtualenv, node_modules, build output, local DB files)
+# when you fill in CLAUDE.md: https://github.com/github/gitignore has one file per language
 .claude/settings.local.json
 .env
 .env.local

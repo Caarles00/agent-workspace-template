@@ -9,6 +9,7 @@
 - Review generated code for possible errors before calling it done
 - Project documentation lives in `docs/` and follows Obsidian and Markdown conventions (see the `obsidian-markdown` skill)
 - **Documentation language**: English _(set this when starting the project; agents write all `docs/` content in this language)_
+- **Code language**: English _(identifiers, code comments and commit messages; it can differ from the documentation language. Public contracts such as URLs and form fields follow the spec)_
 
 ## Project stack
 - **Backend**: _(framework, language, ORM/DB, queue/cache if applicable)_
